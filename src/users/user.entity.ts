@@ -1,8 +1,7 @@
 import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
-export class User extends BaseEntity{
-
+export class User extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -17,7 +16,7 @@ export class User extends BaseEntity{
 
   @Column({
     nullable: true,
-    select: false
+    select: false,
   })
   rememberToken: string;
 

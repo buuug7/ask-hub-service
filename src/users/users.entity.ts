@@ -1,7 +1,7 @@
 import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
-export class User extends BaseEntity {
+export class Users extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -33,7 +33,6 @@ export class User extends BaseEntity {
   // 否则创建一个新的用户来关联
   @Column({
     type: 'json',
-    default: JSON.stringify({}),
   })
   loginFrom: {
     github?: string;

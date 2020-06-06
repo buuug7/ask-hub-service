@@ -1,14 +1,14 @@
 import { Controller, Get, Param, Req, UseGuards } from '@nestjs/common';
-import { UserService } from './user.service';
+import { UsersService } from './users.service';
 import { AuthGuard } from '@nestjs/passport';
 
 @Controller('users')
-export class UserController {
-  constructor(private userService: UserService) {}
+export class UsersController {
+  constructor(private userService: UsersService) {}
 
-  @Get('email/:email')
+  @Get('profile/:email')
   @UseGuards(AuthGuard('jwt'))
-  async findByEmail(@Param('email') email: string) {
+  async profile(@Param('email') email: string) {
     console.log('email', email);
     return this.userService.findByEmail(email);
   }

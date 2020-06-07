@@ -13,3 +13,14 @@ Content-Type: application/json
 ###
 GET {{host}}/users/profile/youpp@126.com
 Authorization: Bearer {{token}}
+
+
+###
+POST {{host}}/questions
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "title": "test title",
+  "description": "test description"
+}

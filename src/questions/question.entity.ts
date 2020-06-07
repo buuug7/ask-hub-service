@@ -1,5 +1,7 @@
 import {
   BaseEntity,
+  BeforeInsert,
+  BeforeUpdate,
   Column,
   Entity,
   ManyToOne,
@@ -31,6 +33,9 @@ export class Question extends BaseEntity {
   description: string;
 
   @Column()
+  active: boolean;
+
+  @Column()
   createdAt: Date;
 
   @Column()
@@ -59,4 +64,15 @@ export class Question extends BaseEntity {
     userQuestionWatch => userQuestionWatch.question,
   )
   userQuestionWatches: UserQuestionWatch[];
+
+  @BeforeInsert()
+  beforeInsertQuestion() {
+    this.createdAt = new Date();
+    this.updatedAt = new Date();
+  }
+
+  @BeforeUpdate()
+  beforeUpdateQuestion() {
+    this.updatedAt = new Date();
+  }
 }

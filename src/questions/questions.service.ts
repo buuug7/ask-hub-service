@@ -67,12 +67,6 @@ export class QuestionsService {
       `Question.userid = User.id`,
     );
 
-    if (queryParam.title) {
-      query.andWhere(`Question.title like :title`, {
-        title: `%${queryParam.title}%`,
-      });
-    }
-
     // 搜索的时候传递search字段的值需要Json.stringify(search)
     if (queryParam.search) {
       const search = JSON.parse(

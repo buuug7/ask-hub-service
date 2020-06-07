@@ -1,4 +1,5 @@
 import { BaseEntity, SelectQueryBuilder } from 'typeorm';
+import { HttpException, HttpStatus } from '@nestjs/common';
 
 export interface QuestionSearchParam {
   title?: string;
@@ -61,4 +62,20 @@ export async function simplePagination(
     current,
     data,
   };
+}
+
+/**
+ * throw a exception if give resource is not found
+ * @param resource
+ * @param type
+ */
+export function checkResource<T>(resource: T, type?: any) {
+  if (resource === undefined) {
+    throw new HttpException(
+      {
+        message: `The resource with **${type.constructor.name}** type is not found`,
+      },
+      HttpStatus.NOT_FOUND,
+    );
+  }
 }

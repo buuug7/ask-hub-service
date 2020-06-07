@@ -1,14 +1,16 @@
 import { Injectable } from '@nestjs/common';
-import { QuestionCreateDto } from './question-create.dto';
+import { QuestionCreateDto, QuestionUpdateDto } from './questions.dto';
 import { AuthPayloadUser } from '../auth/auth.interface';
 import { Question } from './question.entity';
 import { QuestionsTagsService } from '../questions-tags/questions-tags.service';
 import { createQueryBuilder } from 'typeorm';
 import {
+  checkResource,
   PaginationParam,
   QuestionSearchParam,
   simplePagination,
 } from '../utils';
+import { Tag } from '../tags/tag.entity';
 
 @Injectable()
 export class QuestionsService {
@@ -28,11 +30,37 @@ export class QuestionsService {
       }),
     );
 
+    await this.addTags(question, tags);
+    return this.getOne(question.id);
+  }
+
+  async addTags(question: Question, tags: Tag[]) {
     for (const tag of tags) {
       await this.questionsTagsService.create(question, tag);
     }
+  }
 
-    return this.getOne(question.id);
+  async update(id: number, data: QuestionUpdateDto) {
+    const question = await Question.findOne(id, {
+      relations: ['questionTags'],
+    });
+    checkResource(question, new Question());
+
+    // update
+    await Question.merge(question, data).save();
+
+    const newTags = data.tags || [];
+    const oldTags = question.questionTags.map(item => item.id);
+
+    // delete old tags
+    await this.questionsTagsService.deleteByIds(oldTags);
+
+    // add new tags
+    if (newTags?.length > 0) {
+      await this.addTags(question, newTags);
+    }
+
+    return this.getOne(id);
   }
 
   /**
@@ -43,6 +71,8 @@ export class QuestionsService {
     const instance = await Question.findOne(id, {
       relations: ['user', 'answers', 'questionTags'],
     });
+
+    checkResource(instance, new Question());
 
     const tags = instance.questionTags.map(item => {
       return {

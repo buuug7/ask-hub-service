@@ -12,6 +12,7 @@ import { User } from '../users/user.entity';
 import { Answer } from '../answers/answer.entity';
 import { QuestionTag } from '../questions-tags/question-tag.entity';
 import { UserQuestionWatch } from '../users-questions-watches/user-question-watch.entity';
+import { Exclude } from 'class-transformer';
 
 /**
  * 问题
@@ -39,6 +40,7 @@ export class Question extends BaseEntity {
   createdAt: Date;
 
   @Column()
+  @Exclude()
   updatedAt: Date;
 
   @ManyToOne(

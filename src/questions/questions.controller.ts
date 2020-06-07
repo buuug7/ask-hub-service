@@ -4,6 +4,7 @@ import {
   Get,
   Param,
   Post,
+  Query,
   Req,
   UseGuards,
 } from '@nestjs/common';
@@ -28,5 +29,10 @@ export class QuestionsController {
   @Get(':id')
   async getOne(@Param('id') id) {
     return this.questionsService.getOne(id);
+  }
+
+  @Get()
+  async list(@Query() queryParam) {
+    return this.questionsService.getList(queryParam);
   }
 }

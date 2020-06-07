@@ -16,13 +16,16 @@ export class QuestionTag extends BaseEntity {
 
   @ManyToOne(
     type => Question,
-    question => question.questionTag,
+    question => question.questionTags,
   )
   question: Question;
 
   @ManyToOne(
     type => Tag,
     tag => tag.questionTag,
+    {
+      eager: true
+    }
   )
   tag: Tag;
 }

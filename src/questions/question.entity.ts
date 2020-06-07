@@ -57,7 +57,7 @@ export class Question extends BaseEntity {
     type => QuestionTag,
     questionTag => questionTag.question,
   )
-  questionTag: QuestionTag[];
+  questionTags: QuestionTag[];
 
   @OneToMany(
     type => UserQuestionWatch,

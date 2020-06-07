@@ -1,0 +1,9 @@
+### create
+POST {{host}}/tags
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "数学",
+  "slug": "shu-xue"
+}

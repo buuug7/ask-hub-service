@@ -1,0 +1,20 @@
+### create
+POST {{host}}/questions
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "title": "test title",
+  "description": "test description",
+  "tags": [
+    {
+      "id": 1
+    },
+    {
+      "id": 2
+    }
+  ]
+}
+
+### get by id
+GET {{host}}/questions/6

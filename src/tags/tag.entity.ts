@@ -1,5 +1,7 @@
 import {
   BaseEntity,
+  BeforeInsert,
+  BeforeUpdate,
   Column,
   Entity,
   OneToMany,
@@ -35,4 +37,15 @@ export class Tag extends BaseEntity {
     questionTag => questionTag.tag,
   )
   questionTag: QuestionTag[];
+
+  @BeforeInsert()
+  beforeInsertTag() {
+    this.createdAt = new Date();
+    this.updatedAt = new Date();
+  }
+
+  @BeforeUpdate()
+  beforeUpdateTag() {
+    this.updatedAt = new Date();
+  }
 }

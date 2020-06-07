@@ -1,4 +1,12 @@
-import { Body, Controller, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { QuestionsService } from './questions.service';
 import { AuthGuard } from '@nestjs/passport';
 import { QuestionCreateDto } from './question-create.dto';
@@ -15,5 +23,10 @@ export class QuestionsController {
       ...creatForm,
       user: req.user,
     });
+  }
+
+  @Get(':id')
+  async getOne(@Param('id') id) {
+    return this.questionsService.getOne(id);
   }
 }

@@ -1,0 +1,3 @@
+### get user by email
+GET {{host}}/users/profile/youpp@126.com
+Authorization: Bearer {{token}}

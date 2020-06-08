@@ -10,4 +10,13 @@ export class UsersService {
       },
     });
   }
+
+  async profile(email: string) {
+    const rs = await User.findOne({
+      where: { email: email },
+      select: ['id', 'name', 'email', 'createdAt'],
+    });
+
+    return rs;
+  }
 }

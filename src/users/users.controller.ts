@@ -10,6 +10,6 @@ export class UsersController {
   @UseGuards(AuthGuard('jwt'))
   async profile(@Param('email') email: string) {
     console.log('email', email);
-    return this.userService.findByEmail(email);
+    return this.userService.profile(email);
   }
 }

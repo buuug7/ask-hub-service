@@ -8,7 +8,7 @@ Content-Type: application/json
   "description": "test description",
   "tags": [
     {
-      "id": 1
+      "id": 11
     }
   ]
 }
@@ -36,3 +36,6 @@ GET {{host}}/questions/26
 
 ### get list
 GET {{host}}/questions?per=3&current=1&search={"username": "buuug7"}
+
+### delete
+DELETE {{host}}/questions/28

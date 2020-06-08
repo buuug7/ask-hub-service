@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { QuestionCreateDto, QuestionUpdateDto } from './questions.dto';
 import { AuthPayloadUser } from '../auth/auth.interface';
 import { Question } from './question.entity';
@@ -134,5 +134,19 @@ export class QuestionsService {
     query.orderBy('Question_id', 'DESC');
 
     return simplePagination(query, queryParam);
+  }
+
+  async remove(id: number) {
+    const instance = await Question.findOne(id, {
+      relations: ['questionTags'],
+    });
+    checkResource(instance, new Question());
+
+    // delete the tag associated with question
+    const tagIds = instance.questionTags?.map(item => item.id);
+    await this.questionsTagsService.deleteByIds(tagIds);
+
+    const rs = await Question.delete(instance.id);
+    return rs.affected > 0;
   }
 }

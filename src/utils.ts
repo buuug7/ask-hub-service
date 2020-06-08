@@ -73,7 +73,7 @@ export function checkResource<T>(resource: T, type?: any) {
   if (resource === undefined) {
     throw new HttpException(
       {
-        message: `The resource with **${type.constructor.name}** type is not found`,
+        message: `The resource with **${type.constructor.name}** is not found`,
       },
       HttpStatus.NOT_FOUND,
     );

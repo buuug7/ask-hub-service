@@ -1,6 +1,6 @@
 import {
   Body,
-  Controller,
+  Controller, Delete,
   Get,
   Param,
   Post,
@@ -43,5 +43,10 @@ export class QuestionsController {
   @Get()
   async list(@Query() queryParam) {
     return this.questionsService.getList(queryParam);
+  }
+
+  @Delete(':id')
+  async remove(@Param('id') id) {
+    return this.questionsService.remove(id);
   }
 }

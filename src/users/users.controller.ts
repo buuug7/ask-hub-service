@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Req, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, UseGuards } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { AuthGuard } from '@nestjs/passport';
 
@@ -9,7 +9,6 @@ export class UsersController {
   @Get('profile/:email')
   @UseGuards(AuthGuard('jwt'))
   async profile(@Param('email') email: string) {
-    console.log('email', email);
     return this.userService.profile(email);
   }
 }

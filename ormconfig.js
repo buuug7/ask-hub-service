@@ -1,7 +1,7 @@
-module.exports =   {
+module.exports = {
   name: 'default',
   type: 'mysql',
-  host: '172.20.109.222',
+  host: '172.17.118.241',
   port: 3306,
   username: 'root',
   password: 'root',
@@ -9,13 +9,7 @@ module.exports =   {
   synchronize: true,
   logging: true,
   entities: ['dist/**/*.entity{.ts,.js}'],
-  migrations: ['src/migration/**/*.ts'],
-  subscribers: ['src/subscriber/**/*.ts'],
   cli: {
     entitiesDir: 'dist/**/*.entity{.ts,.js}',
-    migrationsDir: 'src/migration/**/*.ts',
-    subscribersDir: 'src/subscriber/**/*.ts',
   },
-  seeds: ['dist/seeds/**/*.seed.ts'],
-  factories: ['src/factories/**/*.factory.ts'],
 };

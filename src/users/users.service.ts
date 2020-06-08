@@ -11,7 +11,7 @@ export class UsersService {
     });
   }
 
-  async profile(email: string) {
+  async profile(email: string): Promise<Partial<User>> {
     const rs = await User.findOne({
       where: { email: email },
       select: ['id', 'name', 'email', 'createdAt'],

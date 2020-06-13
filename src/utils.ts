@@ -22,7 +22,7 @@ export interface PaginationParam {
 }
 
 export async function simplePagination(
-  selectQueryBuilder: SelectQueryBuilder<BaseEntity>,
+  selectQueryBuilder: SelectQueryBuilder<BaseEntity | any>,
   param: PaginationParam,
 ) {
   let { per = 10, current = 1 } = param;

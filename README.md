@@ -34,3 +34,8 @@ $ npm run test:e2e
 $ npm run test:cov
 ```
 
+## TODO
+
+- 更新/删除资源时判定权限
+  - 当资源的创建者 ID 跟用户 ID 相等
+  - 当前用户具有 admin 角色

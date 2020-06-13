@@ -1,0 +1,29 @@
+
+### create
+
+POST {{host}}/answers
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "text": "my Answer",
+  "question": {
+    "id": 1
+  }
+}
+
+### update
+PUT {{host}}/answers/4
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "text": "updated answer"
+}
+
+### get one
+GET {{host}}/answers/4
+
+### delete
+DELETE {{host}}/answers/7
+

@@ -7,5 +7,6 @@ import { QuestionsTagsModule } from '../questions-tags/questions-tags.module';
   imports: [QuestionsTagsModule],
   controllers: [QuestionsController],
   providers: [QuestionsService],
+  exports: [QuestionsService]
 })
 export class QuestionsModule {}

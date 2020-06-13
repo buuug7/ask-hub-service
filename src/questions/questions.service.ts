@@ -17,6 +17,31 @@ export class QuestionsService {
   constructor(private questionsTagsService: QuestionsTagsService) {}
 
   /**
+   * return one question with relations
+   * @param id
+   */
+  async getOne(id: number) {
+    const instance = await Question.findOne(id, {
+      relations: ['user', 'answers', 'questionTags'],
+    });
+
+    checkResource(instance, new Question());
+
+    const tags = instance.questionTags.map(item => {
+      return {
+        ...item.tag,
+      };
+    });
+
+    delete instance.questionTags;
+
+    return {
+      ...instance,
+      tags: tags,
+    };
+  }
+
+  /**
    * create question
    * @param data
    */
@@ -61,31 +86,6 @@ export class QuestionsService {
     }
 
     return this.getOne(id);
-  }
-
-  /**
-   * return one question with relations
-   * @param id
-   */
-  async getOne(id: number) {
-    const instance = await Question.findOne(id, {
-      relations: ['user', 'answers', 'questionTags'],
-    });
-
-    checkResource(instance, new Question());
-
-    const tags = instance.questionTags.map(item => {
-      return {
-        ...item.tag,
-      };
-    });
-
-    delete instance.questionTags;
-
-    return {
-      ...instance,
-      tags: tags,
-    };
   }
 
   async getList(queryParam: PaginationParam) {
@@ -136,7 +136,7 @@ export class QuestionsService {
     return simplePagination(query, queryParam);
   }
 
-  async remove(id: number) {
+  async delete(id: number) {
     const instance = await Question.findOne(id, {
       relations: ['questionTags'],
     });
@@ -155,5 +155,12 @@ export class QuestionsService {
     checkResource(instance, new Question());
 
     return this.questionsTagsService.getTagsByQuestion(instance);
+  }
+
+  async findOne(id: number) {
+    const instance = await Question.findOne(id);
+    checkResource(instance, new Question());
+
+    return instance;
   }
 }

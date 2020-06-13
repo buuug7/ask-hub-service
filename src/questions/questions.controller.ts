@@ -5,6 +5,7 @@ import {
   Get,
   Param,
   Post,
+  Put,
   Query,
   Req,
   UseGuards,
@@ -27,7 +28,8 @@ export class QuestionsController {
     });
   }
 
-  @Post(':id')
+  @Put(':id')
+  @UseGuards(AuthGuard('jwt'))
   async update(
     @Param('id') id,
     @Body() updateForm: QuestionUpdateDto,
@@ -47,8 +49,9 @@ export class QuestionsController {
   }
 
   @Delete(':id')
-  async remove(@Param('id') id) {
-    return this.questionsService.remove(id);
+  @UseGuards(AuthGuard('jwt'))
+  async delete(@Param('id') id) {
+    return this.questionsService.delete(id);
   }
 
   @Get(':id/tags')

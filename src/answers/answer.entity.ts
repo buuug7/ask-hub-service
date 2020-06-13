@@ -24,6 +24,9 @@ export class Answer extends BaseEntity {
   @Column()
   text: string;
 
+  @Column()
+  active: boolean;
+
   @ManyToOne(
     type => Question,
     question => question.answers,
@@ -41,6 +44,4 @@ export class Answer extends BaseEntity {
     userAnswerStar => userAnswerStar.answer,
   )
   userAnswerStars: UserAnswerStar[];
-
-
 }

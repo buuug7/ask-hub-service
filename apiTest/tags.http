@@ -4,16 +4,9 @@ Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-  "name": "数学",
-  "slug": "shu-xue"
+  "name": "语文",
+  "slug": "yu-wen"
 }
-
-### get one
-GET {{host}}/tags/2
-
-### get all
-GET {{host}}/tags
-
 
 ### update tag
 PUT {{host}}/tags/1
@@ -23,3 +16,16 @@ Content-Type: application/json
 {
   "name": "数学"
 }
+
+### get one
+GET {{host}}/tags/2
+
+### get all
+GET {{host}}/tags
+
+### get questions of tag
+GET {{host}}/tags/1/questions?current=1&per=1
+
+
+
+##

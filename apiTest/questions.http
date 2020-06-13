@@ -4,11 +4,14 @@ Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-  "title": "test title",
-  "description": "test description",
+  "title": "fuck title",
+  "description": "fuck description",
   "tags": [
     {
-      "id": 11
+      "id": 1
+    },
+    {
+      "id": 2
     }
   ]
 }

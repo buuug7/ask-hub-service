@@ -94,7 +94,7 @@ export class QuestionsService {
     query.leftJoinAndSelect(
       `Question.user`,
       'User',
-      `Question.userid = User.id`,
+      `Question.userId = User.id`,
     );
 
     // 搜索的时候传递search字段的值需要Json.stringify(search)

@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put, Query } from '@nestjs/common';
 import { TagsService } from './tags.service';
 import { TagCreateDto } from './tag.dto';
 
@@ -24,5 +24,10 @@ export class TagsController {
   @Get()
   async getAll() {
     return this.tagsService.getAllTag();
+  }
+
+  @Get(':id/questions')
+  async getQuestionByTag(@Param('id') id, @Query() queryParam) {
+    return this.tagsService.getQuestions(id, queryParam);
   }
 }

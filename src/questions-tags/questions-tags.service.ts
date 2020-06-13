@@ -3,6 +3,7 @@ import { QuestionTag } from './question-tag.entity';
 import { Question } from '../questions/question.entity';
 import { Tag } from '../tags/tag.entity';
 import { checkResource } from '../utils';
+import { createQueryBuilder } from 'typeorm';
 
 @Injectable()
 export class QuestionsTagsService {
@@ -54,4 +55,24 @@ export class QuestionsTagsService {
     const rs = await this.findOne(question, tag);
     return !!rs;
   }
+
+  async getTagsByQuestion(question: Question) {
+    const rs = await QuestionTag.find({
+      where: {
+        question: question.id,
+      },
+      relations: ['tag'],
+    });
+
+    return rs.map(item => item.tag)
+  }
+
+  // async getQuestions(tag: Tag) {
+  //
+  //   const query = createQueryBuilder(QuestionTag);
+  //
+  //   query.leftJoinAndSelect(
+  //     'QuestionTag.'
+  //   )
+  // }
 }

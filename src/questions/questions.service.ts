@@ -149,4 +149,11 @@ export class QuestionsService {
     const rs = await Question.delete(instance.id);
     return rs.affected > 0;
   }
+
+  async getQuestionTags(id: number) {
+    const instance = await Question.findOne(id);
+    checkResource(instance, new Question());
+
+    return this.questionsTagsService.getTagsByQuestion(instance);
+  }
 }

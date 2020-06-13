@@ -1,6 +1,7 @@
 import {
   Body,
-  Controller, Delete,
+  Controller,
+  Delete,
   Get,
   Param,
   Post,
@@ -48,5 +49,10 @@ export class QuestionsController {
   @Delete(':id')
   async remove(@Param('id') id) {
     return this.questionsService.remove(id);
+  }
+
+  @Get(':id/tags')
+  async tags(@Param('id') id) {
+    return this.questionsService.getQuestionTags(id);
   }
 }

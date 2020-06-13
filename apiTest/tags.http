@@ -7,3 +7,19 @@ Content-Type: application/json
   "name": "数学",
   "slug": "shu-xue"
 }
+
+### get one
+GET {{host}}/tags/2
+
+### get all
+GET {{host}}/tags
+
+
+### update tag
+PUT {{host}}/tags/1
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "数学"
+}

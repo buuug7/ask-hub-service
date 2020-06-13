@@ -14,7 +14,7 @@ Content-Type: application/json
 }
 
 ### update
-POST {{host}}/questions/26
+POST {{host}}/questions/29
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
@@ -39,3 +39,6 @@ GET {{host}}/questions?per=3&current=1&search={"username": "buuug7"}
 
 ### delete
 DELETE {{host}}/questions/28
+
+### get question tags
+GET {{host}}/questions/29/tags

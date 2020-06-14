@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Param, Post, Put, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+  Query,
+} from '@nestjs/common';
 import { TagsService } from './tags.service';
 import { TagCreateDto } from './tag.dto';
 
@@ -19,6 +28,11 @@ export class TagsController {
   @Get(':id')
   async view(@Param('id') id) {
     return this.tagsService.view(id);
+  }
+
+  @Delete(':id')
+  async delete(@Param('id') id) {
+    return this.tagsService.delete(id);
   }
 
   @Get()

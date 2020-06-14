@@ -36,7 +36,7 @@ export class Tag extends BaseEntity {
     type => QuestionTag,
     questionTag => questionTag.tag,
   )
-  questionTag: QuestionTag[];
+  questionTags: QuestionTag[];
 
   @BeforeInsert()
   beforeInsertTag() {

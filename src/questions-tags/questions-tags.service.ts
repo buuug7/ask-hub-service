@@ -25,21 +25,13 @@ export class QuestionsTagsService {
     );
   }
 
-  async deleteByIds(id: number[]) {
-    if (id.length === 0) {
-      return;
-    }
-    return await QuestionTag.delete(id);
-  }
+  async delete(id: number) {
+    const instance = await QuestionTag.findOne(id);
+    checkResource(instance, new QuestionTag());
 
-  async delete(question: Question, tag: Tag) {
-    const instance = await this.findOne(question, tag);
+    const rs = await QuestionTag.delete(instance.id);
 
-    if (instance === undefined) {
-      return Promise.resolve();
-    }
-
-    return await instance.remove();
+    return rs.affected > 0;
   }
 
   async findOne(question: Question, tag: Tag) {

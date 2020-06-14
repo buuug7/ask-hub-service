@@ -22,7 +22,7 @@ export class QuestionTag extends BaseEntity {
 
   @ManyToOne(
     type => Tag,
-    tag => tag.questionTag,
+    tag => tag.questionTags,
     {
       eager: true
     }

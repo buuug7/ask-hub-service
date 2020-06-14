@@ -84,12 +84,12 @@ export class QuestionsService {
 
     // update
     await Question.merge(question, data).save();
-
     const newTags = data.tags || [];
-    const oldTags = question.questionTags.map(item => item.id);
 
     // delete old tags
-    await this.questionsTagsService.deleteByIds(oldTags);
+    for (const questionTag of question.questionTags) {
+      await this.questionsTagsService.delete(questionTag.id);
+    }
 
     // add new tags
     if (newTags?.length > 0) {
@@ -149,13 +149,19 @@ export class QuestionsService {
 
   async delete(id: number) {
     const instance = await Question.findOne(id, {
-      relations: ['questionTags'],
+      relations: ['questionTags', 'answers'],
     });
     checkResource(instance, new Question());
 
-    // delete the tag associated with question
-    const tagIds = instance.questionTags?.map(item => item.id);
-    await this.questionsTagsService.deleteByIds(tagIds);
+    // delete the tag associated with question in questions_tags table
+    for (const questionTag of instance.questionTags) {
+      await this.questionsTagsService.delete(questionTag.id);
+    }
+
+    // delete the answers associated with question
+    for (const answer of instance.answers) {
+      await this.answersService.delete(answer.id);
+    }
 
     const rs = await Question.delete(instance.id);
     return rs.affected > 0;

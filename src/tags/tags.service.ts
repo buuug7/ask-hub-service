@@ -23,8 +23,16 @@ export class TagsService {
   }
 
   async delete(id: number) {
-    const instance = await Tag.findOne(id);
+    const instance = await Tag.findOne(id, {
+      relations: ['questionTags'],
+    });
     checkResource(instance, new Tag());
+
+    // delete the tag associated in questions_tags table
+    for (const questionTag of instance.questionTags) {
+      await this.questionsTagsService.delete(questionTag.id);
+    }
+
     const rs = await Tag.delete(instance.id);
     return rs.affected > 0;
   }

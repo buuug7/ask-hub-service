@@ -23,6 +23,9 @@ GET {{host}}/tags/2
 ### get all
 GET {{host}}/tags
 
+### delete
+DELETE {{host}}/tags/2
+
 ### get questions of tag
 GET {{host}}/tags/1/questions?current=1&per=1
 

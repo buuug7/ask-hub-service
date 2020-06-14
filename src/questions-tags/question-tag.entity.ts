@@ -11,8 +11,8 @@ import { Tag } from '../tags/tag.entity';
 })
 export class QuestionTag extends BaseEntity {
 
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @ManyToOne(
     type => Question,

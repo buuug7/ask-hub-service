@@ -16,8 +16,8 @@ import { UserQuestionWatch } from '../users-questions-watches/user-question-watc
   name: 'users',
 })
 export class User extends BaseEntity {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Column()
   name: string;

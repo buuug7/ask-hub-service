@@ -31,7 +31,7 @@ export class QuestionsService {
    * return one question with relations
    * @param id
    */
-  async view(id: number) {
+  async view(id: string) {
     const instance = await Question.findOne(id, {
       relations: ['user', 'answers', 'questionTags'],
     });
@@ -76,7 +76,7 @@ export class QuestionsService {
     }
   }
 
-  async update(id: number, data: QuestionUpdateDto) {
+  async update(id: string, data: QuestionUpdateDto) {
     const question = await Question.findOne(id, {
       relations: ['questionTags'],
     });
@@ -178,7 +178,7 @@ export class QuestionsService {
    * return question without relations
    * @param id
    */
-  async findOne(id: number) {
+  async findOne(id: string) {
     const instance = await Question.findOne(id);
     checkResource(instance, new Question());
 
@@ -190,7 +190,7 @@ export class QuestionsService {
    * @param id
    * @param queryParam
    */
-  async getAnswersByQuestion(id: number, queryParam: PaginationParam) {
+  async getAnswersByQuestion(id: string, queryParam: PaginationParam) {
     // check question id is validate
     await this.findOne(id);
 

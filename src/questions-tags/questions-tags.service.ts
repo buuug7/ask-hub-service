@@ -7,15 +7,12 @@ import { createQueryBuilder } from 'typeorm';
 
 @Injectable()
 export class QuestionsTagsService {
-  async create(questionId: number, tagId: number) {
-    const exists = await this.isExists(questionId, tagId);
+  async create(questionId: string, tagId: string) {
+    const instance = await this.findOne(questionId, tagId);
 
-    if (exists) {
-      return Promise.resolve();
+    if (instance !== undefined) {
+      return Promise.resolve(instance);
     }
-
-    const _tag = await Tag.findOne(tagId);
-    checkResource(_tag, new Tag());
 
     return await QuestionTag.save(
       QuestionTag.create({
@@ -25,23 +22,18 @@ export class QuestionsTagsService {
     );
   }
 
-  async delete(id: number) {
+  async delete(id: string) {
     const rs = await QuestionTag.delete(id);
     return rs.affected > 0;
   }
 
-  async findOne(questionId: number, tagId: number) {
+  async findOne(questionId: string, tagId: string) {
     return await QuestionTag.findOne({
       where: {
         question: { id: questionId },
         tag: { id: tagId },
       },
     });
-  }
-
-  async isExists(questionId: number, tagId: number): Promise<boolean> {
-    const rs = await this.findOne(questionId, tagId);
-    return !!rs;
   }
 
   /**

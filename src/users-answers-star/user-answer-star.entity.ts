@@ -10,8 +10,8 @@ import { Answer } from '../answers/answer.entity';
   name: 'users-answers-stars',
 })
 export class UserAnswerStar extends BaseEntity {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @ManyToOne(
     type => User,

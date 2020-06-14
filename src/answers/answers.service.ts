@@ -4,19 +4,21 @@ import { Answer } from './answer.entity';
 import { checkResource, PaginationParam, simplePagination } from '../utils';
 import { QuestionsService } from '../questions/questions.service';
 import { createQueryBuilder } from 'typeorm';
+import { UsersAnswersStarService } from '../users-answers-star/users-answers-star.service';
 
 @Injectable()
 export class AnswersService {
   constructor(
     @Inject(forwardRef(() => QuestionsService))
     private questionsService: QuestionsService,
+    private usersAnswersStarService: UsersAnswersStarService,
   ) {}
 
   /**
    * return one answer with relation
    * @param id
    */
-  async view(id: number) {
+  async view(id: string) {
     const instance = await Answer.findOne(id, {
       relations: ['user', 'question'],
     });
@@ -53,7 +55,7 @@ export class AnswersService {
    * @param questionId
    * @param queryParam
    */
-  async getAnswersByQuestion(questionId: number, queryParam: PaginationParam) {
+  async getAnswersByQuestion(questionId: string, queryParam: PaginationParam) {
     const query = createQueryBuilder(Answer);
 
     query.leftJoinAndSelect('Answer.user', 'User', 'Answer.userId = User.id');
@@ -64,11 +66,73 @@ export class AnswersService {
     return simplePagination(query, queryParam);
   }
 
-  async delete(id: number) {
+  async delete(id: string) {
     const instance = await Answer.findOne(id);
     checkResource(instance, new Answer());
 
     const rs = await Answer.delete(instance.id);
     return rs.affected > 0;
+  }
+
+  /**
+   * star answer by given userId
+   * @param answerId
+   * @param userId
+   */
+  async star(answerId: string, userId: string) {
+    await this.usersAnswersStarService.create(answerId, userId);
+    return this.starCount(answerId);
+  }
+
+  /**
+   * un star answer by given userId
+   * @param answerId
+   * @param userId
+   */
+  async unStar(answerId: string, userId: string) {
+    const instance = await this.usersAnswersStarService.findOne(
+      answerId,
+      userId,
+    );
+    await this.usersAnswersStarService.delete(instance.id);
+    return this.starCount(answerId);
+  }
+
+  /**
+   * toggle star
+   * if already star and then unStar, otherwise star
+   * @param answerId
+   * @param userId
+   */
+  async toggleStar(answerId: string, userId: string) {
+    const isStar = await this.isStarByGivenUser(answerId, userId);
+
+    isStar
+      ? await this.unStar(answerId, userId)
+      : await this.star(answerId, userId);
+
+    return this.starCount(answerId);
+  }
+
+  /**
+   * get star count of answer
+   * @param answerId
+   */
+  async starCount(answerId: string) {
+    return this.usersAnswersStarService.getUserCountByAnswer(answerId);
+  }
+
+  /**
+   * determine the answer whether is star by given user
+   * @param answerId
+   * @param userId
+   */
+  async isStarByGivenUser(answerId: string, userId: string): Promise<boolean> {
+    const instance = await this.usersAnswersStarService.findOne(
+      answerId,
+      userId,
+    );
+
+    return instance !== undefined;
   }
 }

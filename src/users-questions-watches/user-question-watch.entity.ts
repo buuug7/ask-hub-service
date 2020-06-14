@@ -10,8 +10,8 @@ import { Question } from '../questions/question.entity';
   name: 'users-question-watches',
 })
 export class UserQuestionWatch extends BaseEntity {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @ManyToOne(
     type => User,

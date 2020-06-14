@@ -6,14 +6,14 @@ Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-  "text": "my Answer",
+  "text": "fuck answer",
   "question": {
-    "id": 1
+    "id": "45aa5435-93c2-4469-ac9c-a8000fa184f8"
   }
 }
 
 ### update
-PUT {{host}}/answers/4
+PUT {{host}}/answers/95696bba-474a-4d38-b16b-1236950dc2be
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
@@ -22,11 +22,25 @@ Content-Type: application/json
 }
 
 ### get one
-GET {{host}}/answers/4
+GET {{host}}/answers/95696bba-474a-4d38-b16b-1236950dc2be
 
 ### delete
-DELETE {{host}}/answers/7
+DELETE {{host}}/answers/dad26e6a-3ef0-47c9-83ac-b99301ab2457
+Authorization: Bearer {{token}}
 
-### list
-GET {{host}}/answers
+### star
+POST {{host}}/answers/95696bba-474a-4d38-b16b-1236950dc2be/star
+Authorization: Bearer {{token}}
+
+### unStar
+POST {{host}}/answers/95696bba-474a-4d38-b16b-1236950dc2be/unStar
+Authorization: Bearer {{token}}
+
+### unStar
+POST {{host}}/answers/95696bba-474a-4d38-b16b-1236950dc2be/toggleStar
+Authorization: Bearer {{token}}
+
+### unStar
+GET {{host}}/answers/95696bba-474a-4d38-b16b-1236950dc2be/isStarByRequestUser
+Authorization: Bearer {{token}}
 

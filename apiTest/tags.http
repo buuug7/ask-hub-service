@@ -4,12 +4,12 @@ Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-  "name": "PC",
-  "slug": "pc"
+  "name": "数学2",
+  "slug": "shu-xue22"
 }
 
 ### update tag
-PUT {{host}}/tags/1
+PUT {{host}}/tags/56b24c25-e90c-4925-9068-09382f67f8b4
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
@@ -18,17 +18,13 @@ Content-Type: application/json
 }
 
 ### get one
-GET {{host}}/tags/2
+GET {{host}}/tags/56b24c25-e90c-4925-9068-09382f67f8b4
 
 ### get all
 GET {{host}}/tags
 
 ### delete
-DELETE {{host}}/tags/2
+DELETE {{host}}/tags/d98c6f2e-595a-4524-ab99-325afe95a044
 
 ### get questions of tag
-GET {{host}}/tags/1/questions?current=1&per=1
-
-
-
-##
+GET {{host}}/tags/56b24c25-e90c-4925-9068-09382f67f8b4/questions?current=1&per=2

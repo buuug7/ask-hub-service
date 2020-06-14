@@ -1,6 +1,6 @@
 export class AnswerCreateDto {
   question: {
-    id: number;
+    id: string;
   };
   text: string;
 }

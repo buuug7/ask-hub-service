@@ -18,8 +18,8 @@ import { UserAnswerStar } from '../users-answers-star/user-answer-star.entity';
   name: 'answers',
 })
 export class Answer extends BaseEntity {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Column()
   text: string;

@@ -42,4 +42,28 @@ export class AnswersController {
   async delete(@Param('id') id) {
     return this.answersService.delete(id);
   }
+
+  @Post(':id/star')
+  @UseGuards(AuthGuard('jwt'))
+  async star(@Param('id') answerId, @Req() req: Request) {
+    return this.answersService.star(answerId, req.user['id']);
+  }
+
+  @Post(':id/unStar')
+  @UseGuards(AuthGuard('jwt'))
+  async unStar(@Param('id') answerId, @Req() req: Request) {
+    return this.answersService.unStar(answerId, req.user['id']);
+  }
+
+  @Get(':id/isStarByRequestUser')
+  @UseGuards(AuthGuard('jwt'))
+  async isAlreadyStar(@Param('id') answerId, @Req() req: Request) {
+    return this.answersService.isStarByGivenUser(answerId, req.user['id']);
+  }
+
+  @Post(':id/toggleStar')
+  @UseGuards(AuthGuard('jwt'))
+  async toggleStar(@Param('id') answerId, @Req() req: Request) {
+    return this.answersService.toggleStar(answerId, req.user['id']);
+  }
 }

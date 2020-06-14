@@ -22,8 +22,8 @@ import { Exclude } from 'class-transformer';
   name: 'questions',
 })
 export class Question extends BaseEntity {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   // 问题标题
   @Column()

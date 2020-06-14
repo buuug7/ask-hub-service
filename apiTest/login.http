@@ -4,7 +4,7 @@ POST {{host}}/auth/login
 Content-Type: application/json
 
 {
-  "email": "twice@qq.com",
+  "email": "youpp@126.com",
   "password": "123456"
 }
 

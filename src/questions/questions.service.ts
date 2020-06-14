@@ -72,7 +72,7 @@ export class QuestionsService {
 
   async addTags(question: Question, tags: Tag[]) {
     for (const tag of tags) {
-      await this.questionsTagsService.create(question, tag);
+      await this.questionsTagsService.create(question.id, tag.id);
     }
   }
 

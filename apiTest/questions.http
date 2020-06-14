@@ -4,20 +4,20 @@ Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-  "title": "fuck title",
-  "description": "fuck description",
+  "title": "wind force",
+  "description": "DIABLO wind force",
   "tags": [
     {
-      "id": 1
+      "id": 3
     },
     {
-      "id": 2
+      "id": 4
     }
   ]
 }
 
 ### update
-PUT {{host}}/questions/1
+PUT {{host}}/questions/8
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
@@ -26,10 +26,7 @@ Content-Type: application/json
   "description": "test2 description2",
   "tags": [
     {
-      "id": 2
-    },
-    {
-      "id": 2
+      "id": 4
     }
   ]
 }

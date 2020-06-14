@@ -7,44 +7,40 @@ import { createQueryBuilder } from 'typeorm';
 
 @Injectable()
 export class QuestionsTagsService {
-  async create(question: Question, tag: Tag) {
-    const exists = await this.isExists(question, tag);
+  async create(questionId: number, tagId: number) {
+    const exists = await this.isExists(questionId, tagId);
 
     if (exists) {
       return Promise.resolve();
     }
 
-    const _tag = await Tag.findOne(tag);
+    const _tag = await Tag.findOne(tagId);
     checkResource(_tag, new Tag());
 
     return await QuestionTag.save(
       QuestionTag.create({
-        question: question,
-        tag: tag,
+        tag: { id: tagId },
+        question: { id: questionId },
       }),
     );
   }
 
   async delete(id: number) {
-    const instance = await QuestionTag.findOne(id);
-    checkResource(instance, new QuestionTag());
-
-    const rs = await QuestionTag.delete(instance.id);
-
+    const rs = await QuestionTag.delete(id);
     return rs.affected > 0;
   }
 
-  async findOne(question: Question, tag: Tag) {
+  async findOne(questionId: number, tagId: number) {
     return await QuestionTag.findOne({
       where: {
-        question: question,
-        tag: tag,
+        question: { id: questionId },
+        tag: { id: tagId },
       },
     });
   }
 
-  async isExists(question: Question, tag: Tag): Promise<boolean> {
-    const rs = await this.findOne(question, tag);
+  async isExists(questionId: number, tagId: number): Promise<boolean> {
+    const rs = await this.findOne(questionId, tagId);
     return !!rs;
   }
 

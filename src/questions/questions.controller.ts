@@ -39,13 +39,13 @@ export class QuestionsController {
   }
 
   @Get(':id')
-  async getOne(@Param('id') id) {
-    return this.questionsService.getOne(id);
+  async view(@Param('id') id) {
+    return this.questionsService.view(id);
   }
 
   @Get()
   async list(@Query() queryParam) {
-    return this.questionsService.getList(queryParam);
+    return this.questionsService.list(queryParam);
   }
 
   @Delete(':id')
@@ -57,5 +57,10 @@ export class QuestionsController {
   @Get(':id/tags')
   async tags(@Param('id') id) {
     return this.questionsService.getQuestionTags(id);
+  }
+
+  @Get(':id/answers')
+  async answers(@Param('id') id, @Query() query) {
+    return this.questionsService.getAnswersByQuestion(id, query);
   }
 }

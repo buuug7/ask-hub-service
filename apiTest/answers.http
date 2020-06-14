@@ -27,3 +27,6 @@ GET {{host}}/answers/4
 ### delete
 DELETE {{host}}/answers/7
 
+### list
+GET {{host}}/answers
+

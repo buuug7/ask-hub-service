@@ -45,3 +45,8 @@ DELETE {{host}}/questions/28
 
 ### get question tags
 GET {{host}}/questions/3/tags
+
+### get question answers
+GET {{host}}/questions/2/answers?per=2
+
+

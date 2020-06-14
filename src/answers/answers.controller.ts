@@ -1,10 +1,12 @@
 import {
   Body,
-  Controller, Delete,
+  Controller,
+  Delete,
   Get,
   Param,
   Post,
   Put,
+  Query,
   Req,
   UseGuards,
 } from '@nestjs/common';
@@ -31,8 +33,8 @@ export class AnswersController {
   }
 
   @Get(':id')
-  async getOne(@Param('id') id) {
-    return this.answersService.getOne(id);
+  async view(@Param('id') id) {
+    return this.answersService.view(id);
   }
 
   @Delete(':id')

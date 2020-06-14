@@ -1,3 +1,14 @@
 ### get user by email
 GET {{host}}/users/profile/youpp@126.com
 Authorization: Bearer {{token}}
+
+### create
+POST {{host}}/users
+Content-Type: application/json
+
+{
+  "name": "FxBar",
+  "email": "FxBar@diablo.cn",
+  "password": "123456",
+  "loginFrom": {}
+}

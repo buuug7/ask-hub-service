@@ -8,7 +8,7 @@ import { QuestionsTagsService } from '../questions-tags/questions-tags.service';
 export class TagsService {
   constructor(private questionsTagsService: QuestionsTagsService) {}
 
-  async findOne(id: number) {
+  async view(id: number) {
     const instance = await Tag.findOne(id);
     checkResource(instance, new Tag());
     return instance;
@@ -34,7 +34,7 @@ export class TagsService {
     checkResource(instance, new Tag());
 
     await Tag.merge(instance, data).save();
-    return this.findOne(id);
+    return this.view(id);
   }
 
   async getQuestions(tagId: number, queryParam) {

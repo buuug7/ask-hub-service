@@ -17,8 +17,8 @@ export class TagsController {
   }
 
   @Get(':id')
-  async getOne(@Param('id') id) {
-    return this.tagsService.findOne(id);
+  async view(@Param('id') id) {
+    return this.tagsService.view(id);
   }
 
   @Get()

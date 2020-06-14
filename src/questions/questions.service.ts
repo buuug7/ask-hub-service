@@ -1,4 +1,10 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  forwardRef,
+  HttpException,
+  HttpStatus,
+  Inject,
+  Injectable,
+} from '@nestjs/common';
 import { QuestionCreateDto, QuestionUpdateDto } from './questions.dto';
 import { AuthPayloadUser } from '../auth/auth.interface';
 import { Question } from './question.entity';
@@ -11,16 +17,21 @@ import {
   simplePagination,
 } from '../utils';
 import { Tag } from '../tags/tag.entity';
+import { AnswersService } from '../answers/answers.service';
 
 @Injectable()
 export class QuestionsService {
-  constructor(private questionsTagsService: QuestionsTagsService) {}
+  constructor(
+    private questionsTagsService: QuestionsTagsService,
+    @Inject(forwardRef(() => AnswersService))
+    private answersService: AnswersService,
+  ) {}
 
   /**
    * return one question with relations
    * @param id
    */
-  async getOne(id: number) {
+  async view(id: number) {
     const instance = await Question.findOne(id, {
       relations: ['user', 'answers', 'questionTags'],
     });
@@ -56,7 +67,7 @@ export class QuestionsService {
     );
 
     await this.addTags(question, tags);
-    return this.getOne(question.id);
+    return this.view(question.id);
   }
 
   async addTags(question: Question, tags: Tag[]) {
@@ -85,10 +96,10 @@ export class QuestionsService {
       await this.addTags(question, newTags);
     }
 
-    return this.getOne(id);
+    return this.view(id);
   }
 
-  async getList(queryParam: PaginationParam) {
+  async list(queryParam: PaginationParam) {
     const query = createQueryBuilder(Question);
 
     query.leftJoinAndSelect(
@@ -157,10 +168,26 @@ export class QuestionsService {
     return this.questionsTagsService.getTagsByQuestion(instance);
   }
 
+  /**
+   * return question without relations
+   * @param id
+   */
   async findOne(id: number) {
     const instance = await Question.findOne(id);
     checkResource(instance, new Question());
 
     return instance;
+  }
+
+  /**
+   * get answers of specified question
+   * @param id
+   * @param queryParam
+   */
+  async getAnswersByQuestion(id: number, queryParam: PaginationParam) {
+    // check question id is validate
+    await this.findOne(id);
+
+    return this.answersService.getAnswersByQuestion(id, queryParam);
   }
 }

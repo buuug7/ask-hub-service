@@ -1,14 +1,22 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { AnswerCreateDto, AnswerUpdateDto } from './answers.dto';
 import { Answer } from './answer.entity';
-import { checkResource } from '../utils';
+import { checkResource, PaginationParam, simplePagination } from '../utils';
 import { QuestionsService } from '../questions/questions.service';
+import { createQueryBuilder } from 'typeorm';
 
 @Injectable()
 export class AnswersService {
-  constructor(private questionsService: QuestionsService) {}
+  constructor(
+    @Inject(forwardRef(() => QuestionsService))
+    private questionsService: QuestionsService,
+  ) {}
 
-  async getOne(id: number) {
+  /**
+   * return one answer with relation
+   * @param id
+   */
+  async view(id: number) {
     const instance = await Answer.findOne(id, {
       relations: ['user', 'question'],
     });
@@ -28,16 +36,32 @@ export class AnswersService {
       }),
     );
 
-    return this.getOne(instance.id);
+    return this.view(instance.id);
   }
 
   async update(id: number, data: AnswerUpdateDto) {
     const instance = await Answer.findOne(id);
+
     checkResource(instance, new Answer());
 
     await Answer.merge(instance, data).save();
+    return this.view(instance.id);
+  }
 
-    return this.getOne(instance.id);
+  /**
+   * get answers of specified question
+   * @param questionId
+   * @param queryParam
+   */
+  async getAnswersByQuestion(questionId: number, queryParam: PaginationParam) {
+    const query = createQueryBuilder(Answer);
+
+    query.leftJoinAndSelect('Answer.user', 'User', 'Answer.userId = User.id');
+    query.where('Answer.questionId = :questionId', {
+      questionId: questionId,
+    });
+
+    return simplePagination(query, queryParam);
   }
 
   async delete(id: number) {

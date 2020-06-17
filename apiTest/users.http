@@ -7,7 +7,7 @@ POST {{host}}/users
 Content-Type: application/json
 
 {
-  "name": "youpp",
+  "name": "buuug7",
   "email": "youpp@126.com",
   "password": "123456",
   "loginFrom": {}

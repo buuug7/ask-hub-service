@@ -21,7 +21,7 @@ import { UsersQuestionsWatchesModule } from './users-questions-watches/users-que
     AnswersModule,
     QuestionsTagsModule,
     UsersAnswersStarModule,
-    UsersQuestionsWatchesModule
+    UsersQuestionsWatchesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

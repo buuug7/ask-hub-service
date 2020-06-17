@@ -20,7 +20,6 @@ export class Tag extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-
   @Column()
   name: string;
 

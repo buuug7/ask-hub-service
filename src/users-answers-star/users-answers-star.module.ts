@@ -3,6 +3,6 @@ import { UsersAnswersStarService } from './users-answers-star.service';
 
 @Module({
   providers: [UsersAnswersStarService],
-  exports: [UsersAnswersStarService]
+  exports: [UsersAnswersStarService],
 })
 export class UsersAnswersStarModule {}

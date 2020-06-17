@@ -1,4 +1,10 @@
-import { BaseEntity, Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { Question } from '../questions/question.entity';
 import { Tag } from '../tags/tag.entity';
 
@@ -10,7 +16,6 @@ import { Tag } from '../tags/tag.entity';
   name: 'questions_tags',
 })
 export class QuestionTag extends BaseEntity {
-
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -24,8 +29,8 @@ export class QuestionTag extends BaseEntity {
     type => Tag,
     tag => tag.questionTags,
     {
-      eager: true
-    }
+      eager: true,
+    },
   )
   tag: Tag;
 }

@@ -9,7 +9,9 @@ module.exports = {
   synchronize: true,
   logging: true,
   entities: ['dist/**/*.entity{.ts,.js}'],
+  migrations: ['migration/*.js'],
   cli: {
     entitiesDir: 'dist/**/*.entity{.ts,.js}',
+    migrationsDir: 'migration',
   },
 };

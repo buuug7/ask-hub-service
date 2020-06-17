@@ -1,14 +1,26 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { User } from './user.entity';
 import { UserCreateDto } from './users.dto';
+import { hashSync } from 'bcrypt';
 
 @Injectable()
 export class UsersService {
   async create(data: UserCreateDto) {
+    const exists = await this.findByEmail(data.email);
+
+    if (exists) {
+      throw new HttpException(
+        {
+          message: 'an email is already exists',
+        },
+        HttpStatus.CONFLICT,
+      );
+    }
+
     const instance = await User.save(
       User.create({
         ...data,
-        // password: 'fuck',
+        password: hashSync(data.password, 3),
         active: true,
       }),
     );

@@ -56,13 +56,12 @@ export class QuestionsService {
    * create question
    * @param data
    */
-  async create(data: QuestionCreateDto & { user: Partial<AuthPayloadUser> }) {
+  async create(data: QuestionCreateDto) {
     const tags = data.tags;
 
     const question = await Question.save(
       Question.create({
         ...data,
-        active: true,
       }),
     );
 

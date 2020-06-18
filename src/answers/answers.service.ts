@@ -34,7 +34,6 @@ export class AnswersService {
     const instance = await Answer.save(
       Answer.create({
         ...data,
-        active: true,
       }),
     );
 

@@ -21,7 +21,6 @@ export class UsersService {
       User.create({
         ...data,
         password: hashSync(data.password, 3),
-        active: true,
       }),
     );
 

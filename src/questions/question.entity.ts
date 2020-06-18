@@ -30,10 +30,14 @@ export class Question extends BaseEntity {
   title: string;
 
   // 问题描述
-  @Column()
+  @Column({
+    length: 1024 * 10,
+  })
   description: string;
 
-  @Column()
+  @Column({
+    default: true
+  })
   active: boolean;
 
   @Column()

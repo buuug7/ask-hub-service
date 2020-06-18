@@ -2,6 +2,7 @@ import {
   BaseEntity,
   Column,
   Entity,
+  Index,
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -15,6 +16,7 @@ import { Tag } from '../tags/tag.entity';
 @Entity({
   name: 'questions_tags',
 })
+@Index(['question', 'tag'], { unique: true })
 export class QuestionTag extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;

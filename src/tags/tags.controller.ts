@@ -16,7 +16,7 @@ export class TagsController {
   constructor(private tagsService: TagsService) {}
 
   @Post()
-  async create(@Body() createForm: TagCreateDto) {
+  async create(@Body() createForm) {
     return this.tagsService.create(createForm);
   }
 

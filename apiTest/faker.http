@@ -1,0 +1,12 @@
+
+### faker users
+GET {{host}}/faker/create/users
+
+### faker tags
+GET {{host}}/faker/create/tags
+
+### faker questions
+GET {{host}}/faker/create/questions
+
+### faker answers
+GET {{host}}/faker/create/answers

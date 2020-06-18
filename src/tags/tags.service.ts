@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Tag } from './tag.entity';
 import { checkResource } from '../utils';
-import { TagUpdateDto } from './tag.dto';
+import { TagCreateDto, TagUpdateDto } from './tag.dto';
 import { QuestionsTagsService } from '../questions-tags/questions-tags.service';
 
 @Injectable()
@@ -14,8 +14,8 @@ export class TagsService {
     return instance;
   }
 
-  async create(createForm) {
-    return await Tag.save(Tag.create(createForm));
+  async create(data: TagCreateDto) {
+    return await Tag.save(Tag.create(data));
   }
 
   async getAllTag() {

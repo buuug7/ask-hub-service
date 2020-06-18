@@ -21,10 +21,14 @@ export class Answer extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
+  @Column({
+    type: 'text',
+  })
   text: string;
 
-  @Column()
+  @Column({
+    default: true,
+  })
   active: boolean;
 
   @ManyToOne(

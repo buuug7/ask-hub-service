@@ -6,14 +6,7 @@ Content-Type: application/json
 {
   "title": "wind force",
   "description": "DIABLO wind force",
-  "tags": [
-    {
-      "id": "56b24c25-e90c-4925-9068-09382f67f8b4"
-    },
-    {
-      "id": "a8413712-05d3-402a-ae24-f522b6f956e1"
-    }
-  ]
+  "tags": []
 }
 
 ### update
@@ -45,6 +38,6 @@ Authorization: Bearer {{token}}
 GET {{host}}/questions/59513087-402b-49ad-aa6d-b546f505d5b5/tags
 
 ### get question answers
-GET {{host}}/questions/59513087-402b-49ad-aa6d-b546f505d5b5/answers?per=2
+GET {{host}}/questions/fa8adcd1-60df-4bb9-b2b6-6d73aabab5be/answers?per=10
 
 

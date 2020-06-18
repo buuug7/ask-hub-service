@@ -10,6 +10,7 @@ import { AnswersModule } from './answers/answers.module';
 import { QuestionsTagsModule } from './questions-tags/questions-tags.module';
 import { UsersAnswersStarModule } from './users-answers-star/users-answers-star.module';
 import { UsersQuestionsWatchesModule } from './users-questions-watches/users-questions-watches.module';
+import { FakerModule } from './faker/faker.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { UsersQuestionsWatchesModule } from './users-questions-watches/users-que
     QuestionsTagsModule,
     UsersAnswersStarModule,
     UsersQuestionsWatchesModule,
+    FakerModule
   ],
   controllers: [AppController],
   providers: [AppService],

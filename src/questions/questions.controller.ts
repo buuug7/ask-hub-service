@@ -21,7 +21,7 @@ export class QuestionsController {
 
   @Post()
   @UseGuards(AuthGuard('jwt'))
-  async create(@Body() creatForm: QuestionCreateDto, @Req() req: Request) {
+  async create(@Body() creatForm, @Req() req: Request) {
     return this.questionsService.create({
       ...creatForm,
       user: req.user,

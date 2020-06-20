@@ -3,6 +3,7 @@ export class AnswerCreateDto {
     id: string;
   };
   text: string;
+  user: { id: string };
 }
 
 export class AnswerUpdateDto {

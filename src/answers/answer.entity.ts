@@ -1,5 +1,7 @@
 import {
   BaseEntity,
+  BeforeInsert,
+  BeforeUpdate,
   Column,
   Entity,
   ManyToOne,
@@ -9,6 +11,7 @@ import {
 import { Question } from '../questions/question.entity';
 import { User } from '../users/user.entity';
 import { UserAnswerStar } from '../users-answers-star/user-answer-star.entity';
+import { Exclude } from 'class-transformer';
 
 /**
  * 问题的答案
@@ -31,6 +34,13 @@ export class Answer extends BaseEntity {
   })
   active: boolean;
 
+  @Column()
+  createdAt: Date;
+
+  @Column()
+  @Exclude()
+  updatedAt: Date;
+
   @ManyToOne(
     type => Question,
     question => question.answers,
@@ -48,4 +58,15 @@ export class Answer extends BaseEntity {
     userAnswerStar => userAnswerStar.answer,
   )
   userAnswerStars: UserAnswerStar[];
+
+  @BeforeInsert()
+  beforeInsertQuestion() {
+    this.createdAt = new Date();
+    this.updatedAt = new Date();
+  }
+
+  @BeforeUpdate()
+  beforeUpdateQuestion() {
+    this.updatedAt = new Date();
+  }
 }

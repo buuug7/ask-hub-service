@@ -108,12 +108,21 @@ export class FakerService {
     const data = await this.questionsService.list({ per: 5 });
     const questions = data.data;
 
+    const user1 = await User.findOne({
+      where: { email: 'ask@dev.com' },
+    });
+
+    const user2 = await User.findOne({
+      where: { email: 'youpp@126.com' },
+    });
+
     const answers = [];
     for (let i = 0; i < 50; i++) {
       answers.push(
         await this.answersService.create({
           text: faker.lorem.paragraphs(),
           question: i % 2 === 0 ? questions[1] : questions[4],
+          user: { id: i % 2 ? user1.id : user2.id },
         }),
       );
     }

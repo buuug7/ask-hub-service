@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { UserAnswerStar } from './user-answer-star.entity';
 import { createQueryBuilder } from 'typeorm';
-import { PaginationParam, simplePagination } from '../utils';
+import { simplePagination } from '../utils';
+import { PaginationParam } from '../app.interface';
 
 @Injectable()
 export class UsersAnswersStarService {
@@ -50,7 +51,7 @@ export class UsersAnswersStarService {
       .where('UserAnswerStar.userId = :userId', {
         userId: userId,
       });
-    const rs = await simplePagination(query, queryParam);
+    const rs = await simplePagination<UserAnswerStar>(query, queryParam);
     const data = rs.data.map(item => {
       return { ...item.answer };
     });
@@ -78,7 +79,7 @@ export class UsersAnswersStarService {
         answerId: answerId,
       });
 
-    const rs = await simplePagination(query, queryParam);
+    const rs = await simplePagination<UserAnswerStar>(query, queryParam);
     const data = rs.data.map(item => {
       return { ...item.user };
     });

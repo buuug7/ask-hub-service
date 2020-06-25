@@ -1,10 +1,11 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { AnswerCreateDto, AnswerUpdateDto } from './answers.dto';
 import { Answer } from './answer.entity';
-import { checkResource, PaginationParam, simplePagination } from '../utils';
+import { checkResource, simplePagination } from '../utils';
 import { QuestionsService } from '../questions/questions.service';
 import { createQueryBuilder } from 'typeorm';
 import { UsersAnswersStarService } from '../users-answers-star/users-answers-star.service';
+import { PaginationParam } from '../app.interface';
 
 @Injectable()
 export class AnswersService {

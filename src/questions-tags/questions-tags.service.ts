@@ -2,8 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { QuestionTag } from './question-tag.entity';
 import { Question } from '../questions/question.entity';
 import { Tag } from '../tags/tag.entity';
-import { checkResource, PaginationParam, simplePagination } from '../utils';
+import { simplePagination } from '../utils';
 import { createQueryBuilder } from 'typeorm';
+import { PaginationParam } from '../app.interface';
 
 @Injectable()
 export class QuestionsTagsService {
@@ -65,7 +66,7 @@ export class QuestionsTagsService {
         tagId: tag.id,
       });
 
-    const rs = await simplePagination(query, queryParam);
+    const rs = await simplePagination<QuestionTag>(query, queryParam);
     const data = rs.data.map(item => {
       return {
         ...item.question,

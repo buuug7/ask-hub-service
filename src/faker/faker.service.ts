@@ -105,8 +105,9 @@ export class FakerService {
    * faker answers
    */
   async createAnswers() {
-    const data = await this.questionsService.list({ per: 5 });
-    const questions = data.data;
+    const { data: questions } = await this.questionsService.list({
+      perPage: 5,
+    });
 
     const user1 = await User.findOne({
       where: { email: 'ask@dev.com' },

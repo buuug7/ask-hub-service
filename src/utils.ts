@@ -1,66 +1,51 @@
 import { BaseEntity, SelectQueryBuilder } from 'typeorm';
 import { HttpException, HttpStatus } from '@nestjs/common';
+import { Pagination, PaginationParam } from './app.interface';
 
-export interface QuestionSearchParam {
-  title?: string;
-  createdAt?: {
-    op?: string;
-    value: string;
-  };
-  updatedAt?: {
-    op?: string;
-    value: string;
-  };
-  username?: string;
-}
-
-export interface PaginationParam {
-  per?: number;
-  current?: number;
-  search?: QuestionSearchParam;
-  [propName: string]: any;
-}
-
-export async function simplePagination(
+export async function simplePagination<T>(
   selectQueryBuilder: SelectQueryBuilder<BaseEntity | any>,
   param: PaginationParam,
-) {
-  let { per = 10, current = 1 } = param;
+): Promise<Pagination<T>> {
+  let { perPage = 10, currentPage = 1 } = param;
 
-  per = parseInt(String(per), 10);
-  current = parseInt(String(current), 10);
+  perPage = parseInt(String(perPage), 10);
+  currentPage = parseInt(String(currentPage), 10);
 
   const total = await selectQueryBuilder.getCount();
 
-  if (per <= 0) {
-    per = 1;
+  if (perPage <= 0) {
+    perPage = 1;
   }
 
   const totalPage =
-    total % per === 0 ? total / per : parseInt(String(total / per), 10) + 1;
+    total % perPage === 0
+      ? total / perPage
+      : parseInt(String(total / perPage), 10) + 1;
 
-  if (current >= totalPage) {
-    current = totalPage;
+  if (currentPage >= totalPage) {
+    currentPage = totalPage;
   }
 
-  if (current <= 0) {
-    current = 1;
+  if (currentPage <= 0) {
+    currentPage = 1;
   }
 
   console.log('totalPage', totalPage);
-  console.log('current', current);
+  console.log('current', currentPage);
 
   const data = await selectQueryBuilder
-    .skip(per * (current - 1))
-    .take(per)
+    .skip(perPage * (currentPage - 1))
+    .take(perPage)
     .getMany();
 
   return {
-    total,
-    totalPage,
-    per,
-    current,
-    data,
+    meta: {
+      total,
+      totalPage,
+      perPage,
+      currentPage,
+    },
+    data: data,
   };
 }
 

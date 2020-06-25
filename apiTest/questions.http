@@ -28,7 +28,7 @@ Content-Type: application/json
 GET {{host}}/questions/59513087-402b-49ad-aa6d-b546f505d5b5
 
 ### get list
-GET {{host}}/questions?per=3&current=1&search={"username": "buuug7"}
+GET {{host}}/questions?perPage=3&currentPage=2&search={"username": "buuug7"}
 
 ### delete
 DELETE {{host}}/questions/d0a75cfa-0484-4d9f-8088-78352ae6aa63
@@ -38,6 +38,6 @@ Authorization: Bearer {{token}}
 GET {{host}}/questions/59513087-402b-49ad-aa6d-b546f505d5b5/tags
 
 ### get question answers
-GET {{host}}/questions/fa8adcd1-60df-4bb9-b2b6-6d73aabab5be/answers?per=10
+GET {{host}}/questions/e873c799-2e45-4ce8-bf65-ce38f0e1c90b/answers?perPage=10
 
 

@@ -1,23 +1,12 @@
-import {
-  forwardRef,
-  HttpException,
-  HttpStatus,
-  Inject,
-  Injectable,
-} from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { QuestionCreateDto, QuestionUpdateDto } from './questions.dto';
-import { AuthPayloadUser } from '../auth/auth.interface';
 import { Question } from './question.entity';
 import { QuestionsTagsService } from '../questions-tags/questions-tags.service';
 import { createQueryBuilder } from 'typeorm';
-import {
-  checkResource,
-  PaginationParam,
-  QuestionSearchParam,
-  simplePagination,
-} from '../utils';
+import { checkResource, simplePagination } from '../utils';
 import { Tag } from '../tags/tag.entity';
 import { AnswersService } from '../answers/answers.service';
+import { PaginationParam, QuestionSearchParam } from '../app.interface';
 
 @Injectable()
 export class QuestionsService {
@@ -143,7 +132,7 @@ export class QuestionsService {
 
     query.orderBy('Question_id', 'DESC');
 
-    return simplePagination(query, queryParam);
+    return simplePagination<Question>(query, queryParam);
   }
 
   async delete(id: number) {

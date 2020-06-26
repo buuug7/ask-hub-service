@@ -66,4 +66,9 @@ export class AnswersController {
   async toggleStar(@Param('id') answerId, @Req() req: Request) {
     return this.answersService.toggleStar(answerId, req.user['id']);
   }
+
+  @Get(':id/starCount')
+  async starCount(@Param('id') id) {
+    return this.answersService.starCount(id);
+  }
 }

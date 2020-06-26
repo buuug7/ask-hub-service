@@ -36,11 +36,14 @@ Authorization: Bearer {{token}}
 POST {{host}}/answers/95696bba-474a-4d38-b16b-1236950dc2be/unStar
 Authorization: Bearer {{token}}
 
-### unStar
-POST {{host}}/answers/95696bba-474a-4d38-b16b-1236950dc2be/toggleStar
+### toggleStar
+POST {{host}}/answers/95696bba-474a
 Authorization: Bearer {{token}}
 
-### unStar
+### starCount
+GET {{host}}/answers/007abaa0-8842-47fe-8504-8b9d309d2ac7/starCount
+
+### isStarByRequestUser
 GET {{host}}/answers/95696bba-474a-4d38-b16b-1236950dc2be/isStarByRequestUser
 Authorization: Bearer {{token}}
 

@@ -89,7 +89,6 @@ export class QuestionsService {
 
   async list(queryParam: PaginationParam) {
     const query = createQueryBuilder(Question);
-
     query.leftJoinAndSelect(
       `Question.user`,
       'User',
@@ -129,8 +128,7 @@ export class QuestionsService {
         });
       }
     }
-
-    query.orderBy('Question_id', 'DESC');
+    query.orderBy('Question_createdAt', 'DESC');
 
     return simplePagination<Question>(query, queryParam);
   }

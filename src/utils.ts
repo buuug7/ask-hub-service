@@ -34,8 +34,8 @@ export async function simplePagination<T>(
   console.log('current', currentPage);
 
   const data = await selectQueryBuilder
-    .skip(perPage * (currentPage - 1))
-    .take(perPage)
+    .offset(perPage * (currentPage - 1))
+    .limit(perPage)
     .getMany();
 
   return {

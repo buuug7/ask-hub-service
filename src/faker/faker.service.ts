@@ -60,7 +60,7 @@ export class FakerService {
    */
   async createTags() {
     const tags: Tag[] = [];
-    for (let i = 0; i < 50; i++) {
+    for (let i = 0; i < 20; i++) {
       tags.push(
         await this.tagsService.create({
           name: faker.lorem.words(2),

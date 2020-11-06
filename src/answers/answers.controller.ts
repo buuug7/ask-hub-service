@@ -28,8 +28,8 @@ export class AnswersController {
 
   @Put(':id')
   @UseGuards(AuthGuard('jwt'))
-  async update(@Param('id') id, @Body() form) {
-    return this.answersService.update(id, form);
+  async update(@Param('id') id, @Body() form, @Req() req : Request) {
+    return this.answersService.update(id, form, req.user);
   }
 
   @Get(':id')
@@ -39,8 +39,8 @@ export class AnswersController {
 
   @Delete(':id')
   @UseGuards(AuthGuard('jwt'))
-  async delete(@Param('id') id) {
-    return this.answersService.delete(id);
+  async delete(@Param('id') id, @Req() req: Request) {
+    return this.answersService.delete(id, req.user);
   }
 
   @Post(':id/star')

@@ -31,7 +31,7 @@ GET {{host}}/questions/59513087-402b-49ad-aa6d-b546f505d5b5
 GET {{host}}/questions?perPage=3&currentPage=2&search={"username": "buuug7"}
 
 ### delete
-DELETE {{host}}/questions/d0a75cfa-0484-4d9f-8088-78352ae6aa63
+DELETE {{host}}/questions/bc531943-1ca6-4217-9b85-88e3c30e507e
 Authorization: Bearer {{token}}
 
 ### get question tags

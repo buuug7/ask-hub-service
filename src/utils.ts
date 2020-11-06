@@ -1,6 +1,9 @@
 import { BaseEntity, SelectQueryBuilder } from 'typeorm';
-import { HttpException, HttpStatus } from '@nestjs/common';
+import { ForbiddenException, HttpException, HttpStatus } from '@nestjs/common';
 import { Pagination, PaginationParam } from './app.interface';
+import { User } from './users/user.entity';
+import { Question } from './questions/question.entity';
+import { Answer } from './answers/answer.entity';
 
 export async function simplePagination<T>(
   selectQueryBuilder: SelectQueryBuilder<BaseEntity | any>,
@@ -49,6 +52,39 @@ export async function simplePagination<T>(
   };
 }
 
+export const PERMISSIONS = [
+  'questions:delete',
+  'questions:update',
+  'answers:delete',
+  'answers:update',
+  'tags:delete',
+  'tags:update',
+];
+
+/**
+ * determine whether a user is admin user
+ * @param user
+ */
+export function isAdmin(user: Partial<User>) {
+  // TODO
+  return user.name === 'ask@dev.com';
+}
+
+/**
+ * determine whether the user have the permission of resource
+ * @param user
+ * @param resource
+ */
+export function havePermissionOf<
+  T extends Question | Answer,
+  U extends Partial<User>
+>(resource: T, user: U): boolean {
+  // if (isAdmin(user)) {
+  //   return true;
+  // }
+  return resource.user.id === user.id;
+}
+
 /**
  * throw a exception if give resource is not found
  * @param resource
@@ -62,5 +98,19 @@ export function checkResource<T>(resource: T, type?: any) {
       },
       HttpStatus.NOT_FOUND,
     );
+  }
+}
+
+/**
+ * throw exception if give user don't have enough permission
+ * @param resource
+ * @param user
+ */
+export function checkPermission<
+  T extends Question | Answer,
+  U extends Partial<User>
+>(resource: T, user: U) {
+  if (!havePermissionOf(resource, user)) {
+    throw new ForbiddenException("you don't have enough permission");
   }
 }

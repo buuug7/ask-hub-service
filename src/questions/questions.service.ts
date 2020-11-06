@@ -3,10 +3,11 @@ import { QuestionCreateDto, QuestionUpdateDto } from './questions.dto';
 import { Question } from './question.entity';
 import { QuestionsTagsService } from '../questions-tags/questions-tags.service';
 import { createQueryBuilder } from 'typeorm';
-import { checkResource, simplePagination } from '../utils';
+import { checkPermission, checkResource, simplePagination } from '../utils';
 import { Tag } from '../tags/tag.entity';
 import { AnswersService } from '../answers/answers.service';
 import { PaginationParam, QuestionSearchParam } from '../app.interface';
+import { User } from '../users/user.entity';
 
 @Injectable()
 export class QuestionsService {
@@ -27,7 +28,7 @@ export class QuestionsService {
 
     checkResource(instance, new Question());
 
-    const tags = instance.questionTags.map(item => {
+    const tags = instance.questionTags.map((item) => {
       return {
         ...item.tag,
       };
@@ -64,11 +65,12 @@ export class QuestionsService {
     }
   }
 
-  async update(id: string, data: QuestionUpdateDto) {
+  async update(id: string, data: QuestionUpdateDto, user: Partial<User>) {
     const question = await Question.findOne(id, {
       relations: ['questionTags'],
     });
     checkResource(question, new Question());
+    checkPermission(question, user);
 
     // update
     await Question.merge(question, data).save();
@@ -133,11 +135,17 @@ export class QuestionsService {
     return simplePagination<Question>(query, queryParam);
   }
 
-  async delete(id: number) {
+  /**
+   * delete question with id
+   * @param id
+   * @param user
+   */
+  async delete(id: number, user: Partial<User>) {
     const instance = await Question.findOne(id, {
-      relations: ['questionTags', 'answers'],
+      relations: ['questionTags', 'answers', 'user'],
     });
     checkResource(instance, new Question());
+    checkPermission(instance, user);
 
     // delete the tag associated with question in questions_tags table
     for (const questionTag of instance.questionTags) {
@@ -146,7 +154,7 @@ export class QuestionsService {
 
     // delete the answers associated with question
     for (const answer of instance.answers) {
-      await this.answersService.delete(answer.id);
+      await this.answersService.deleteWithoutPermission(answer.id);
     }
 
     const rs = await Question.delete(instance.id);

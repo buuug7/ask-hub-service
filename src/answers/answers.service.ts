@@ -1,11 +1,12 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { AnswerCreateDto, AnswerUpdateDto } from './answers.dto';
 import { Answer } from './answer.entity';
-import { checkResource, simplePagination } from '../utils';
+import { checkPermission, checkResource, simplePagination } from '../utils';
 import { QuestionsService } from '../questions/questions.service';
 import { createQueryBuilder } from 'typeorm';
 import { UsersAnswersStarService } from '../users-answers-star/users-answers-star.service';
 import { PaginationParam } from '../app.interface';
+import { User } from '../users/user.entity';
 
 @Injectable()
 export class AnswersService {
@@ -41,10 +42,11 @@ export class AnswersService {
     return this.view(instance.id);
   }
 
-  async update(id: number, data: AnswerUpdateDto) {
+  async update(id: number, data: AnswerUpdateDto, user: Partial<User>) {
     const instance = await Answer.findOne(id);
 
     checkResource(instance, new Answer());
+    checkPermission(instance, user);
 
     await Answer.merge(instance, data).save();
     return this.view(instance.id);
@@ -66,10 +68,26 @@ export class AnswersService {
     return simplePagination(query, queryParam);
   }
 
-  async delete(id: string) {
+  /**
+   * delete resource
+   * @param id
+   * @param user
+   */
+  async delete(id: string, user: Partial<User>) {
     const instance = await Answer.findOne(id);
     checkResource(instance, new Answer());
+    checkPermission(instance, user);
+    const rs = await Answer.delete(instance.id);
+    return rs.affected > 0;
+  }
 
+  /**
+   * delete answer without check permission
+   * @param id
+   */
+  async deleteWithoutPermission(id: string) {
+    const instance = await Answer.findOne(id);
+    checkResource(instance, new Answer());
     const rs = await Answer.delete(instance.id);
     return rs.affected > 0;
   }

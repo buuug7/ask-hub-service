@@ -35,7 +35,7 @@ export class QuestionsController {
     @Body() updateForm: QuestionUpdateDto,
     @Req() req: Request,
   ) {
-    return this.questionsService.update(id, updateForm);
+    return this.questionsService.update(id, updateForm, req.user);
   }
 
   @Get(':id')
@@ -50,8 +50,8 @@ export class QuestionsController {
 
   @Delete(':id')
   @UseGuards(AuthGuard('jwt'))
-  async delete(@Param('id') id) {
-    return this.questionsService.delete(id);
+  async delete(@Param('id') id, @Req() req : Request) {
+    return this.questionsService.delete(id, req.user);
   }
 
   @Get(':id/tags')

@@ -89,6 +89,25 @@ export class QuestionsService {
     return this.view(id);
   }
 
+  async getByMostAnswers(limit: number) {
+    const query = createQueryBuilder('questions');
+    query.addSelect('count(Answer.id)', 'Question_answerCount');
+    query.leftJoinAndSelect(
+      'Question.user',
+      'User',
+      'Question.userId = User.id',
+    );
+    query.leftJoin(
+      'Question.answers',
+      'Answer',
+      'Question.id = Answer.questionId',
+    );
+    query.groupBy('Question.id');
+    query.addOrderBy('Question_answerCount', 'DESC');
+
+    return await query.limit(limit).getMany();
+  }
+
   async list(queryParam: PaginationParam) {
     const query = createQueryBuilder(Question);
     query.leftJoinAndSelect(

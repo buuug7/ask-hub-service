@@ -50,7 +50,7 @@ export class QuestionsController {
 
   @Delete(':id')
   @UseGuards(AuthGuard('jwt'))
-  async delete(@Param('id') id, @Req() req : Request) {
+  async delete(@Param('id') id, @Req() req: Request) {
     return this.questionsService.delete(id, req.user);
   }
 
@@ -62,5 +62,11 @@ export class QuestionsController {
   @Get(':id/answers')
   async answers(@Param('id') id, @Query() query) {
     return this.questionsService.getAnswersByQuestion(id, query);
+  }
+
+  @Get('/analysis/getByMostAnswers')
+  async getMostAnswered(@Query() queryParam) {
+    const limit = queryParam.limit || 10;
+    return this.questionsService.getByMostAnswers(limit);
   }
 }

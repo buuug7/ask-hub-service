@@ -1,4 +1,5 @@
 import {
+  AfterLoad,
   BaseEntity,
   BeforeInsert,
   BeforeUpdate,
@@ -36,7 +37,7 @@ export class Question extends BaseEntity {
   description: string;
 
   @Column({
-    default: true
+    default: true,
   })
   active: boolean;
 
@@ -47,27 +48,18 @@ export class Question extends BaseEntity {
   @Exclude()
   updatedAt: Date;
 
-  @ManyToOne(
-    type => User,
-    user => user.questions,
-  )
+  @ManyToOne((type) => User, (user) => user.questions)
   user: User;
 
-  @OneToMany(
-    type => Answer,
-    answer => answer.question,
-  )
+  @OneToMany((type) => Answer, (answer) => answer.question)
   answers: Answer[];
 
-  @OneToMany(
-    type => QuestionTag,
-    questionTag => questionTag.question,
-  )
+  @OneToMany((type) => QuestionTag, (questionTag) => questionTag.question)
   questionTags: QuestionTag[];
 
   @OneToMany(
-    type => UserQuestionWatch,
-    userQuestionWatch => userQuestionWatch.question,
+    (type) => UserQuestionWatch,
+    (userQuestionWatch) => userQuestionWatch.question,
   )
   userQuestionWatches: UserQuestionWatch[];
 
@@ -81,4 +73,16 @@ export class Question extends BaseEntity {
   beforeUpdateQuestion() {
     this.updatedAt = new Date();
   }
+
+  @Column({
+    generatedType: 'VIRTUAL',
+  })
+  answerCount: number;
+
+  // private url: string;
+  // @AfterLoad()
+  // getUrl() {
+  //   console.log('this=', this)
+  //   this.url = "https://github.com"
+  // }
 }

@@ -1,10 +1,12 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { User } from './user.entity';
 import { UserCreateDto } from './users.dto';
 import { hashSync } from 'bcrypt';
+import { PrismaService } from '../prisma.service';
 
 @Injectable()
 export class UsersService {
+  constructor(private prismaService: PrismaService) {}
+
   async create(data: UserCreateDto) {
     const exists = await this.findByEmail(data.email);
 
@@ -17,30 +19,35 @@ export class UsersService {
       );
     }
 
-    const instance = await User.save(
-      User.create({
+    const instance = await this.prismaService.user.create({
+      data: {
         ...data,
+        createdAt: new Date(),
+        updatedAt: new Date(),
         password: hashSync(data.password, 3),
-      }),
-    );
+      },
+    });
 
     return this.profile(instance.email);
   }
 
-  async findByEmail(email: string): Promise<User> {
-    return await User.findOne({
+  async findByEmail(email: string) {
+    return await this.prismaService.user.findUnique({
       where: {
         email: email,
       },
     });
   }
 
-  async profile(email: string): Promise<Partial<User>> {
-    const rs = await User.findOne({
+  async profile(email: string) {
+    return await this.prismaService.user.findUnique({
       where: { email: email },
-      select: ['id', 'name', 'email', 'createdAt'],
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        createdAt: true,
+      },
     });
-
-    return rs;
   }
 }

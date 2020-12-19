@@ -1,12 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { User } from '../users/user.entity';
 import * as faker from 'faker';
-import { Tag } from '../tags/tag.entity';
 import { UsersService } from '../users/users.service';
 import { UserCreateDto } from '../users/users.dto';
 import { TagsService } from '../tags/tags.service';
 import { QuestionsService } from '../questions/questions.service';
 import { AnswersService } from '../answers/answers.service';
+import { PrismaService } from '../prisma.service';
 
 @Injectable()
 export class FakerService {
@@ -15,6 +14,7 @@ export class FakerService {
     private tagsService: TagsService,
     private questionsService: QuestionsService,
     private answersService: AnswersService,
+    private prismaService: PrismaService,
   ) {}
 
   /**
@@ -59,7 +59,7 @@ export class FakerService {
    * faker tags
    */
   async createTags() {
-    const tags: Tag[] = [];
+    const tags = [];
     for (let i = 0; i < 20; i++) {
       tags.push(
         await this.tagsService.create({
@@ -76,24 +76,28 @@ export class FakerService {
    * faker questions
    */
   async createQuestions() {
-    const user1 = await User.findOne({
+    const user1 = await this.prismaService.user.findUnique({
       where: { email: 'ask@dev.com' },
     });
 
-    const user2 = await User.findOne({
+    const user2 = await this.prismaService.user.findUnique({
       where: { email: 'youpp@126.com' },
     });
 
-    const tags: Tag[] = await Tag.find();
+    const tags = await this.prismaService.tag.findMany();
     const questions = [];
 
     for (let i = 0; i < 50; i++) {
       questions.push(
         await this.questionsService.create({
           title: faker.lorem.words(),
-          description: faker.lorem.paragraphs(),
+          description: faker.lorem.paragraphs(1),
           user: { id: i % 2 ? user1.id : user2.id },
-          tags: [...tags.slice(0, i % 2 ? 4 : 8)],
+          tags: [
+            ...tags.slice(0, i % 2 ? 4 : 8).map((item) => {
+              return { id: item.id };
+            }),
+          ],
         }),
       );
     }
@@ -105,15 +109,15 @@ export class FakerService {
    * faker answers
    */
   async createAnswers() {
-    const { data: questions } = await this.questionsService.list({
+    const questions = await this.questionsService.list({
       perPage: 5,
     });
 
-    const user1 = await User.findOne({
+    const user1 = await this.prismaService.user.findUnique({
       where: { email: 'ask@dev.com' },
     });
 
-    const user2 = await User.findOne({
+    const user2 = await this.prismaService.user.findUnique({
       where: { email: 'youpp@126.com' },
     });
 

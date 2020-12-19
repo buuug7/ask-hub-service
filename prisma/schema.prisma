@@ -1,0 +1,78 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                     String                   @id @default(uuid())
+  email                  String                   @unique
+  name                   String
+  password               String
+  rememberToken          String?
+  active                 Int                      @default(1)
+  createdAt              DateTime
+  updatedAt              DateTime
+  loginFrom              Json
+  answers                Answer[]
+  questions              Question[]
+  staredAnswers          UserAnswerStar[]
+}
+
+model Question {
+  id                     String                   @id @default(uuid())
+  title                  String
+  description            String
+  active                 Int                      @default(1)
+  createdAt              DateTime
+  updatedAt              DateTime
+  user                   User                     @relation(fields: [userId], references: [id])
+  userId                 String
+  answers                Answer[]
+  tags                   QuestionTag[]
+}
+
+model Tag {
+  id             String           @id @default(uuid())
+  name           String
+  slug           String
+  createdAt      DateTime
+  updatedAt      DateTime
+  questions      QuestionTag[]
+}
+
+model Answer {
+  id                  String                @id @default(uuid())
+  text                String
+  active              Int                   @default(1)
+  createdAt           DateTime
+  updatedAt           DateTime
+  question            Question              @relation(fields: [questionId], references: [id])
+  questionId          String
+  user                User                  @relation(fields: [userId], references: [id])
+  userId              String
+  stars               UserAnswerStar[]
+}
+
+
+model QuestionTag {
+  question     Question      @relation(fields: [questionId], references: [id])
+  questionId   String
+  tag          Tag           @relation(fields: [tagId], references: [id])
+  tagId        String
+
+  @@id([questionId, tagId])
+}
+
+
+model UserAnswerStar {
+  user       User         @relation(fields: [userId], references: [id])
+  userId     String
+  answer     Answer       @relation(fields: [answerId], references: [id])
+  answerId   String
+
+  @@id([userId, answerId])
+}

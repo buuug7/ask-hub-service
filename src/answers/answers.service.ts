@@ -1,19 +1,13 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
-import { AnswerCreateDto, AnswerUpdateDto } from './answers.dto';
-import { Answer } from './answer.entity';
-import { checkPermission, checkResource, simplePagination } from '../utils';
 import { QuestionsService } from '../questions/questions.service';
-import { createQueryBuilder } from 'typeorm';
-import { UsersAnswersStarService } from '../users-answers-star/users-answers-star.service';
-import { PaginationParam } from '../app.interface';
-import { User } from '../users/user.entity';
+import { PrismaService } from '../prisma.service';
 
 @Injectable()
 export class AnswersService {
   constructor(
     @Inject(forwardRef(() => QuestionsService))
     private questionsService: QuestionsService,
-    private usersAnswersStarService: UsersAnswersStarService,
+    private prismaService: PrismaService,
   ) {}
 
   /**
@@ -21,51 +15,66 @@ export class AnswersService {
    * @param id
    */
   async view(id: string) {
-    const instance = await Answer.findOne(id, {
-      relations: ['user', 'question'],
+    // const instance = await Answer.findOne(id, {
+    //   relations: ['user', 'question'],
+    // });
+
+    // checkResource(instance, new Answer());
+
+    const instance = this.prismaService.answer.findUnique({
+      where: {
+        id: id,
+      },
+      include: {
+        user: true,
+        question: true,
+      },
     });
-    checkResource(instance, new Answer());
 
     return instance;
   }
 
-  async create(data: AnswerCreateDto) {
-    // throw Exception if no question found
-    await this.questionsService.findOne(data.question.id);
-
-    const instance = await Answer.save(
-      Answer.create({
-        ...data,
-      }),
-    );
-
-    return this.view(instance.id);
-  }
-
-  async update(id: number, data: AnswerUpdateDto, user: Partial<User>) {
-    const instance = await Answer.findOne(id);
-
-    checkResource(instance, new Answer());
-    checkPermission(instance, user);
-
-    await Answer.merge(instance, data).save();
-    return this.view(instance.id);
-  }
-
-  /**
-   * get answers of specified question
-   * @param questionId
-   * @param queryParam
-   */
-  async getAnswersByQuestion(questionId: string, queryParam: PaginationParam) {
-    const query = createQueryBuilder(Answer);
-
-    query.leftJoinAndSelect('Answer.user', 'User', 'Answer.userId = User.id');
-    query.where('Answer.questionId = :questionId', {
-      questionId: questionId,
+  async create(data) {
+    return await this.prismaService.answer.create({
+      data: {
+        text: data.text,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        question: {
+          connect: data.question,
+        },
+        user: {
+          connect: data.user,
+        },
+      },
     });
 
-    return simplePagination(query, queryParam);
+    // throw Exception if no question found
+    // await this.questionsService.findOne(data.question.id);
+    //
+    // const instance = await Answer.save(
+    //   Answer.create({
+    //     ...data,
+    //   }),
+    // );
+    //
+    // return this.view(instance.id);
+  }
+
+  async update(id, data, user) {
+    // const instance = await Answer.findOne(id);
+    //
+    // checkResource(instance, new Answer());
+    // checkPermission(instance, user);
+    //
+    // await Answer.merge(instance, data).save();
+    // return this.view(instance.id);
+    return await this.prismaService.answer.update({
+      where: { id },
+      data: {
+        text: data.text,
+      },
+    });
   }
 
   /**
@@ -73,23 +82,28 @@ export class AnswersService {
    * @param id
    * @param user
    */
-  async delete(id: string, user: Partial<User>) {
-    const instance = await Answer.findOne(id);
-    checkResource(instance, new Answer());
-    checkPermission(instance, user);
-    const rs = await Answer.delete(instance.id);
-    return rs.affected > 0;
+  async delete(id: string, user) {
+    // const instance = await Answer.findOne(id);
+    // checkResource(instance, new Answer());
+    // checkPermission(instance, user);
+    // const rs = await Answer.delete(instance.id);
+    // return rs.affected > 0;
+
+    return this.prismaService.answer.delete({
+      where: { id },
+    });
   }
 
   /**
-   * delete answer without check permission
-   * @param id
+   * get answers of specified question
+   * @param questionId
    */
-  async deleteWithoutPermission(id: string) {
-    const instance = await Answer.findOne(id);
-    checkResource(instance, new Answer());
-    const rs = await Answer.delete(instance.id);
-    return rs.affected > 0;
+  async getAnswersByQuestion(questionId) {
+    return this.prismaService.answer.findMany({
+      where: {
+        questionId,
+      },
+    });
   }
 
   /**
@@ -97,8 +111,21 @@ export class AnswersService {
    * @param answerId
    * @param userId
    */
-  async star(answerId: string, userId: string) {
-    await this.usersAnswersStarService.create(answerId, userId);
+  async star(answerId, userId) {
+    // await this.usersAnswersStarService.create(answerId, userId);
+    // return this.starCount(answerId);
+
+    await this.prismaService.userAnswerStar.create({
+      data: {
+        answer: {
+          connect: { id: answerId },
+        },
+        user: {
+          connect: { id: userId },
+        },
+      },
+    });
+
     return this.starCount(answerId);
   }
 
@@ -108,11 +135,22 @@ export class AnswersService {
    * @param userId
    */
   async unStar(answerId: string, userId: string) {
-    const instance = await this.usersAnswersStarService.findOne(
-      answerId,
-      userId,
-    );
-    await this.usersAnswersStarService.delete(instance.id);
+    // const instance = await this.usersAnswersStarService.findOne(
+    //   answerId,
+    //   userId,
+    // );
+    // await this.usersAnswersStarService.delete(instance.id);
+
+    await this.prismaService.userAnswerStar.delete({
+      where: {
+        // eslint-disable-next-line @typescript-eslint/camelcase
+        userId_answerId: {
+          answerId: answerId,
+          userId: userId,
+        },
+      },
+    });
+
     return this.starCount(answerId);
   }
 
@@ -136,8 +174,13 @@ export class AnswersService {
    * get star count of answer
    * @param answerId
    */
-  async starCount(answerId: string) {
-    return this.usersAnswersStarService.getUserCountByAnswer(answerId);
+  async starCount(answerId) {
+    // return this.usersAnswersStarService.getUserCountByAnswer(answerId);
+    return await this.prismaService.userAnswerStar.findMany({
+      where: {
+        answerId,
+      },
+    });
   }
 
   /**
@@ -146,11 +189,23 @@ export class AnswersService {
    * @param userId
    */
   async isStarByGivenUser(answerId: string, userId: string): Promise<boolean> {
-    const instance = await this.usersAnswersStarService.findOne(
-      answerId,
-      userId,
-    );
+    // const instance = await this.usersAnswersStarService.findOne(
+    //   answerId,
+    //   userId,
+    // );
+    //
+    // return instance !== undefined;
 
-    return instance !== undefined;
+    const instance = this.prismaService.userAnswerStar.findUnique({
+      where: {
+        // eslint-disable-next-line @typescript-eslint/camelcase
+        userId_answerId: {
+          answerId,
+          userId,
+        },
+      },
+    });
+
+    return instance !== null;
   }
 }

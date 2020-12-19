@@ -1,7 +1,4 @@
 import { Controller, Get } from '@nestjs/common';
-import { User } from '../users/user.entity';
-import { hashSync } from 'bcrypt';
-import { createQueryBuilder } from 'typeorm';
 import { FakerService } from './faker.service';
 
 @Controller('faker')

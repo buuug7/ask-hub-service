@@ -8,11 +8,11 @@ export class UsersController {
 
   @Get('profile/:email')
   async profile(@Param('email') email: string) {
-    return this.userService.profile(email);
+    return this.userService.getProfile(email);
   }
 
   @Post()
-  async create(@Body() createForm) {
-    return this.userService.create(createForm);
+  async create(@Body() body) {
+    return this.userService.create(body);
   }
 }

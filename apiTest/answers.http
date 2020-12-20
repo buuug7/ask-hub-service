@@ -8,7 +8,7 @@ Content-Type: application/json
 {
   "text": "fuck answer",
   "question": {
-    "id": "45aa5435-93c2-4469-ac9c-a8000fa184f8"
+    "id": "3ca7344c-de9a-4d7f-86b8-16b7a825f3bb"
   }
 }
 
@@ -29,11 +29,11 @@ DELETE {{host}}/answers/dad26e6a-3ef0-47c9-83ac-b99301ab2457
 Authorization: Bearer {{token}}
 
 ### star
-POST {{host}}/answers/95696bba-474a-4d38-b16b-1236950dc2be/star
+POST {{host}}/answers/32d8ffd3-2192-47f4-bec5-9a065e13b99a/star
 Authorization: Bearer {{token}}
 
 ### unStar
-POST {{host}}/answers/95696bba-474a-4d38-b16b-1236950dc2be/unStar
+POST {{host}}/answers/32d8ffd3-2192-47f4-bec5-9a065e13b99a/unStar
 Authorization: Bearer {{token}}
 
 ### toggleStar
@@ -41,7 +41,7 @@ POST {{host}}/answers/95696bba-474a
 Authorization: Bearer {{token}}
 
 ### starCount
-GET {{host}}/answers/007abaa0-8842-47fe-8504-8b9d309d2ac7/starCount
+GET {{host}}/answers/32d8ffd3-2192-47f4-bec5-9a065e13b99a/starCount
 
 ### isStarByRequestUser
 GET {{host}}/answers/95696bba-474a-4d38-b16b-1236950dc2be/isStarByRequestUser

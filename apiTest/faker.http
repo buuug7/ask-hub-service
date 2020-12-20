@@ -1,4 +1,3 @@
-
 ### faker users
 GET {{host}}/faker/create/users
 

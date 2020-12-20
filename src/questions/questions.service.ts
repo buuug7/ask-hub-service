@@ -1,44 +1,51 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
-import { QuestionCreateDto, QuestionUpdateDto } from './questions.dto';
-import { Question } from './question.entity';
-import { QuestionsTagsService } from '../questions-tags/questions-tags.service';
-import { createQueryBuilder } from 'typeorm';
-import { checkPermission, checkResource, simplePagination } from '../utils';
-import { Tag } from '../tags/tag.entity';
+import { Question, QuestionTag } from './questions.type';
 import { AnswersService } from '../answers/answers.service';
-import { PaginationParam, QuestionSearchParam } from '../app.interface';
-import { User } from '../users/user.entity';
+import { PaginationParam } from '../app.type';
+import { DbService } from '../db.service';
+import { randomStringGenerator } from '@nestjs/common/utils/random-string-generator.util';
+import * as dayjs from 'dayjs';
+import { ResultSetHeader } from 'mysql2';
+import { Answer } from '../answers/answers.type';
+import { UsersService } from '../users/users.service';
+import { dateTimeFormat, simplePagination } from '../utils';
+import { Tag } from '../tags/tags.type';
 
 @Injectable()
 export class QuestionsService {
   constructor(
-    private questionsTagsService: QuestionsTagsService,
     @Inject(forwardRef(() => AnswersService))
     private answersService: AnswersService,
+    private dbService: DbService,
+    private userService: UsersService,
   ) {}
 
   /**
-   * return one question with relations
+   * get question by id without relations
    * @param id
    */
-  async view(id: string) {
-    const instance = await Question.findOne(id, {
-      relations: ['user', 'answers', 'questionTags'],
-    });
+  async getById(id: string): Promise<Question> {
+    const sql = `select *
+                 from questions
+                 where id = ?
+                 limit 1`;
+    const questions = await this.dbService.execute<Question[]>(sql, [id]);
+    return questions[0];
+  }
 
-    checkResource(instance, new Question());
-
-    const tags = instance.questionTags.map((item) => {
-      return {
-        ...item.tag,
-      };
-    });
-
-    delete instance.questionTags;
+  /**
+   * get question with relations
+   * @param id
+   */
+  async getByIdWithRelation(id: string) {
+    const question = await this.getById(id);
+    const user = await this.userService.findById(question.userId);
+    const tags = await this.getTags(question.id);
 
     return {
-      ...instance,
-      tags: tags,
+      ...question,
+      user,
+      tags,
     };
   }
 
@@ -46,167 +53,150 @@ export class QuestionsService {
    * create question
    * @param data
    */
-  async create(data: QuestionCreateDto) {
-    const tags = data.tags;
+  async create(data: Partial<Question>) {
+    const sql = `insert into questions(id, title, description, active, createdAt, updatedAt, userId)
+                 values (?, ?, ?, ?, ?, ?, ?)`;
+    const dateTime = dayjs().format(dateTimeFormat);
+    const questionId = randomStringGenerator();
+    const rs = await this.dbService.execute<ResultSetHeader>(sql, [
+      questionId,
+      data.title,
+      data.description,
+      '1',
+      dateTime,
+      dateTime,
+      data.user.id,
+    ]);
 
-    const question = await Question.save(
-      Question.create({
-        ...data,
-      }),
+    // attach tag
+    if (data.tags.length > 0) {
+      for (const tag of data.tags) {
+        await this.attachTag(questionId, tag.id);
+      }
+    }
+
+    return this.getById(questionId);
+  }
+
+  async isAttachedByGivenTag(questionId, tagId) {
+    const sql = `select *
+                 from questions_tags
+                 where questionId = ?
+                   and tagId = ?`;
+    const rs = await this.dbService.execute<QuestionTag[]>(sql, [
+      questionId,
+      tagId,
+    ]);
+    return rs.length > 0;
+  }
+
+  async toggleTag(questionId, tagId) {
+    const isAttachedByGivenTag = await this.isAttachedByGivenTag(
+      questionId,
+      tagId,
     );
-
-    await this.addTags(question, tags);
-    return this.view(question.id);
-  }
-
-  async addTags(question: Question, tags: Tag[]) {
-    for (const tag of tags) {
-      await this.questionsTagsService.create(question.id, tag.id);
+    if (isAttachedByGivenTag) {
+      await this.detachTag(questionId, tagId);
+    } else {
+      await this.attachTag(questionId, tagId);
     }
   }
 
-  async update(id: string, data: QuestionUpdateDto, user: Partial<User>) {
-    const question = await Question.findOne(id, {
-      relations: ['questionTags'],
-    });
-    checkResource(question, new Question());
-    checkPermission(question, user);
+  async attachTag(questionId, tagId) {
+    const sql = `insert into questions_tags(questionId, tagId)
+                 values (?, ?)`;
+    const rs = await this.dbService.execute<ResultSetHeader>(sql, [
+      questionId,
+      tagId,
+    ]);
+    return rs.affectedRows > 0;
+  }
 
-    // update
-    await Question.merge(question, data).save();
-    const newTags = data.tags || [];
+  async detachTag(questionId, tagId) {
+    const sql = `delete
+                 from questions_tags
+                 where questionId = ?
+                   and tagId = ?`;
+    const rs = await this.dbService.execute<ResultSetHeader>(sql, [
+      questionId,
+      tagId,
+    ]);
 
-    // delete old tags
-    for (const questionTag of question.questionTags) {
-      await this.questionsTagsService.delete(questionTag.id);
+    return rs.affectedRows > 0;
+  }
+
+  async update(id: string, data: Partial<Question>) {
+    const sql = `update questions
+                 set title       = ?,
+                     description = ?,
+                     updatedAt   = ?
+                 where id = ?`;
+    const updatedAt = dayjs().format(dateTimeFormat);
+    const rs = await this.dbService.execute(sql, [
+      data.title,
+      data.description,
+      updatedAt,
+      id,
+    ]);
+
+    // update related tags
+    if (data.tags.length > 0) {
+      for (const tag of data.tags) {
+        await this.toggleTag(id, tag.id);
+      }
     }
-
-    // add new tags
-    if (newTags?.length > 0) {
-      await this.addTags(question, newTags);
-    }
-
-    return this.view(id);
+    return this.getById(id);
   }
 
   async getByMostAnswers(limit: number) {
-    const query = createQueryBuilder('questions');
-    query.addSelect('count(Answer.id)', 'Question_answerCount');
-    query.leftJoinAndSelect(
-      'Question.user',
-      'User',
-      'Question.userId = User.id',
-    );
-    query.leftJoin(
-      'Question.answers',
-      'Answer',
-      'Question.id = Answer.questionId',
-    );
-    query.groupBy('Question.id');
-    query.addOrderBy('Question_answerCount', 'DESC');
-
-    return await query.limit(limit).getMany();
+    // TODO
   }
 
+  /**
+   *
+   * @param queryParam
+   */
   async list(queryParam: PaginationParam) {
-    const query = createQueryBuilder(Question);
-    query.leftJoinAndSelect(
-      `Question.user`,
-      'User',
-      `Question.userId = User.id`,
+    return await simplePagination<Question>(
+      this.dbService,
+      'questions',
+      queryParam,
     );
-
-    // 搜索的时候传递search字段的值需要Json.stringify(search)
-    if (queryParam.search) {
-      const search = JSON.parse(
-        queryParam.search as string,
-      ) as QuestionSearchParam;
-
-      if (search.title) {
-        query.andWhere(`Question.title like :title`, {
-          title: `%${search.title}%`,
-        });
-      }
-
-      if (search.username) {
-        query.andWhere(`User.name = :name`, {
-          name: search.username,
-        });
-      }
-
-      // TODO: 根据createdAt区间查询
-      if (search.createdAt) {
-        const { op, value } = search.createdAt;
-        query.andWhere(`Question.createdAt ${op} :createdAt`, {
-          createdAt: value,
-        });
-      }
-
-      if (search.updatedAt) {
-        const { op, value } = search.updatedAt;
-        query.andWhere(`Question.updatedAt ${op} :updatedAt`, {
-          updatedAt: value,
-        });
-      }
-    }
-    query.orderBy('Question_createdAt', 'DESC');
-
-    return simplePagination<Question>(query, queryParam);
   }
 
   /**
    * delete question with id
    * @param id
-   * @param user
    */
-  async delete(id: number, user: Partial<User>) {
-    const instance = await Question.findOne(id, {
-      relations: ['questionTags', 'answers', 'user'],
-    });
-    checkResource(instance, new Question());
-    checkPermission(instance, user);
+  async delete(id) {
+    const sql = `delete
+                 from questions
+                 where id = ?`;
+    const rs = await this.dbService.execute<ResultSetHeader>(sql, [id]);
 
-    // delete the tag associated with question in questions_tags table
-    for (const questionTag of instance.questionTags) {
-      await this.questionsTagsService.delete(questionTag.id);
-    }
-
-    // delete the answers associated with question
-    for (const answer of instance.answers) {
-      await this.answersService.deleteWithoutPermission(answer.id);
-    }
-
-    const rs = await Question.delete(instance.id);
-    return rs.affected > 0;
-  }
-
-  async getQuestionTags(id: number) {
-    const instance = await Question.findOne(id);
-    checkResource(instance, new Question());
-
-    return this.questionsTagsService.getTagsByQuestion(instance);
+    return rs.affectedRows > 0;
   }
 
   /**
-   * return question without relations
-   * @param id
+   * get tags by questionId
+   * @param questionId
    */
-  async findOne(id: string) {
-    const instance = await Question.findOne(id);
-    checkResource(instance, new Question());
-
-    return instance;
+  async getTags(questionId: string) {
+    const sql = `select t.*
+                 from tags t
+                          left join questions_tags qt on t.id = qt.tagId
+                 where qt.questionId = ?`;
+    return await this.dbService.execute<Tag[]>(sql, [questionId]);
   }
 
   /**
-   * get answers of specified question
-   * @param id
-   * @param queryParam
+   * get answers by questionId
+   * @param questionId
    */
-  async getAnswersByQuestion(id: string, queryParam: PaginationParam) {
-    // check question id is validate
-    await this.findOne(id);
-
-    return this.answersService.getAnswersByQuestion(id, queryParam);
+  async getAnswers(questionId) {
+    const sql = `select *
+                 from answers
+                 where questionId = ?`;
+    return await this.dbService.execute<Answer[]>(sql, [questionId]);
   }
 }

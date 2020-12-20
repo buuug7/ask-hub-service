@@ -12,7 +12,6 @@ import {
 } from '@nestjs/common';
 import { QuestionsService } from './questions.service';
 import { AuthGuard } from '@nestjs/passport';
-import { QuestionCreateDto, QuestionUpdateDto } from './questions.dto';
 import { Request } from 'express';
 
 @Controller('questions')
@@ -21,52 +20,54 @@ export class QuestionsController {
 
   @Post()
   @UseGuards(AuthGuard('jwt'))
-  async create(@Body() creatForm, @Req() req: Request) {
+  async create(@Body() body, @Req() req: Request) {
     return this.questionsService.create({
-      ...creatForm,
+      ...body,
       user: req.user,
     });
   }
 
   @Put(':id')
   @UseGuards(AuthGuard('jwt'))
-  async update(
-    @Param('id') id,
-    @Body() updateForm: QuestionUpdateDto,
-    @Req() req: Request,
-  ) {
-    return this.questionsService.update(id, updateForm, req.user);
+  async update(@Param('id') id, @Body() body, @Req() req: Request) {
+    return this.questionsService.update(id, {
+      ...body,
+      user: {
+        // @ts-ignore
+        id: req.user.id,
+      },
+    });
   }
 
   @Get(':id')
   async view(@Param('id') id) {
-    return this.questionsService.view(id);
+    return this.questionsService.getByIdWithRelation(id);
   }
 
   @Get()
-  async list(@Query() queryParam) {
-    return this.questionsService.list(queryParam);
+  async list(@Query() query) {
+    return this.questionsService.list(query);
   }
 
   @Delete(':id')
   @UseGuards(AuthGuard('jwt'))
   async delete(@Param('id') id, @Req() req: Request) {
-    return this.questionsService.delete(id, req.user);
+    return this.questionsService.delete(id);
   }
 
   @Get(':id/tags')
   async tags(@Param('id') id) {
-    return this.questionsService.getQuestionTags(id);
+    return this.questionsService.getTags(id);
   }
 
   @Get(':id/answers')
-  async answers(@Param('id') id, @Query() query) {
-    return this.questionsService.getAnswersByQuestion(id, query);
+  async answers(@Param('id') id) {
+    return this.questionsService.getAnswers(id);
   }
 
   @Get('/analysis/getByMostAnswers')
-  async getMostAnswered(@Query() queryParam) {
-    const limit = queryParam.limit || 10;
+  async getMostAnswered(@Query() query) {
+    const limit = query.limit || 10;
     return this.questionsService.getByMostAnswers(limit);
   }
 }

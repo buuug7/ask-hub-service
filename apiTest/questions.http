@@ -4,13 +4,20 @@ Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-  "title": "wind force",
-  "description": "DIABLO wind force",
-  "tags": []
+  "title": "are every read force",
+  "description": "Diablo",
+  "tags": [
+    {
+      "id": "8da939d7-670f-4b2f-ad38-62675b396bcb"
+    },
+    {
+      "id": "97468664-dacf-4bfe-ad74-8a4658f295d8"
+    }
+  ]
 }
 
 ### update
-PUT {{host}}/questions/45aa5435-93c2-4469-ac9c-a8000fa184f8
+PUT {{host}}/questions/2e51af7b-dd0f-4db4-8eff-203b81b8acce
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
@@ -25,16 +32,16 @@ Content-Type: application/json
 }
 
 ### get by id
-GET {{host}}/questions/59513087-402b-49ad-aa6d-b546f505d5b5
+GET {{host}}/questions/57a6f84a-0194-40fe-8539-7cc754b333a7
 
 ### get list
-GET {{host}}/questions?perPage=3&currentPage=2&search={"username": "buuug7", "mostAnswer": true}
+GET {{host}}/questions?perPage=3&currentPage=2
 
 ### getByMostAnswers
 GET {{host}}/questions/analysis/getByMostAnswers
 
 ### delete
-DELETE {{host}}/questions/bc531943-1ca6-4217-9b85-88e3c30e507e
+DELETE {{host}}/questions/2e51af7b-dd0f-4db4-8eff-203b81b8acce
 Authorization: Bearer {{token}}
 
 ### get question tags

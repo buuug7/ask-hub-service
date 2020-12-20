@@ -18,8 +18,8 @@ import { Request } from 'express';
 export class QuestionsController {
   constructor(private readonly questionsService: QuestionsService) {}
 
-  @Post()
   @UseGuards(AuthGuard('jwt'))
+  @Post()
   async create(@Body() creatForm, @Req() req: Request) {
     return this.questionsService.create({
       ...creatForm,

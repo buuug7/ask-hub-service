@@ -1,6 +1,6 @@
 # Ask Hub Service
 
-An application where collect and share ask/answer questions. use node nest framework.
+An application where collect and share ask/answer questions.
 
 ## Installation
 

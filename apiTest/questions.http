@@ -6,7 +6,14 @@ Content-Type: application/json
 {
   "title": "wind force",
   "description": "DIABLO wind force",
-  "tags": []
+  "tags": [
+    {
+      "id": "183fd037-378b-428f-9282-a64fa3f219bb"
+    },
+    {
+      "id": "183fd037-378b-428f-9282-a64fa3f219bb"
+    }
+  ]
 }
 
 ### update

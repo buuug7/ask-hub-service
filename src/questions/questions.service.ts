@@ -18,31 +18,13 @@ export class QuestionsService {
    * @param id
    */
   async getOne(id: string) {
-    // const instance = await Question.findOne(id, {
-    //   relations: ['user', 'answers', 'questionTags'],
-    // });
-    //
-    // checkResource(instance, new Question());
-    //
-    // const tags = instance.questionTags.map((item) => {
-    //   return {
-    //     ...item.tag,
-    //   };
-    // });
-    //
-    // delete instance.questionTags;
-    //
-    // return {
-    //   ...instance,
-    //   tags: tags,
-    // };
-
     return await this.prismaService.question.findUnique({
       where: {
         id: id,
       },
       include: {
         tags: true,
+        user: true,
       },
     });
   }
@@ -51,21 +33,38 @@ export class QuestionsService {
    * create question
    * @param data
    */
-  async create(data: Prisma.QuestionCreateInput & { tags: { id: string }[] }) {
-    return await this.prismaService.question.create({
+  async create(data) {
+    const question = await this.prismaService.question.create({
       data: {
         title: data.title,
         description: data.description,
         createdAt: new Date(),
         updatedAt: new Date(),
-        tags: {
-          connect: data.tags,
-        },
         user: {
-          connect: data.user,
+          connect: {
+            id: data.user.id,
+          },
         },
       },
     });
+
+    return question;
+    // const questionId = question.id;
+    //
+    // for (const tag of data.tags) {
+    //   await this.prismaService.questionTag.create({
+    //     data: {
+    //       question: {
+    //         connect: {
+    //           id: questionId,
+    //         },
+    //       },
+    //       tag: {
+    //         connectOrCreate: tag,
+    //       },
+    //     },
+    //   });
+    // }
   }
 
   // async addTags(question: Question, tags: Tag[]) {

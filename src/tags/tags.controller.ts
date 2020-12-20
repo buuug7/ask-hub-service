@@ -9,15 +9,14 @@ import {
   Query,
 } from '@nestjs/common';
 import { TagsService } from './tags.service';
-import { TagCreateDto } from './tag.dto';
 
 @Controller('tags')
 export class TagsController {
   constructor(private tagsService: TagsService) {}
 
   @Post()
-  async create(@Body() createForm) {
-    return this.tagsService.create(createForm);
+  async create(@Body() form) {
+    return this.tagsService.create(form);
   }
 
   @Put(':id')
@@ -27,7 +26,7 @@ export class TagsController {
 
   @Get(':id')
   async view(@Param('id') id) {
-    return this.tagsService.view(id);
+    return this.tagsService.getById(id);
   }
 
   @Delete(':id')

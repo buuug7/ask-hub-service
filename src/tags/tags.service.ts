@@ -1,48 +1,62 @@
 import { Injectable } from '@nestjs/common';
 import { Tag } from './tag.entity';
 import { checkResource } from '../utils';
-import { TagCreateDto, TagUpdateDto } from './tag.dto';
 import { QuestionsTagsService } from '../questions-tags/questions-tags.service';
+import DbService from '../db.service';
+import { randomStringGenerator } from '@nestjs/common/utils/random-string-generator.util';
+import * as dayjs from 'dayjs';
+import { ResultSetHeader } from 'mysql2';
 
 @Injectable()
 export class TagsService {
-  constructor(private questionsTagsService: QuestionsTagsService) {}
+  constructor(
+    private questionsTagsService: QuestionsTagsService,
+    private dbService: DbService,
+  ) {}
 
-  async view(id: number) {
-    const instance = await Tag.findOne(id);
-    checkResource(instance, new Tag());
-    return instance;
+  async getById(id) {
+    const sql = `select * from tags where id = ? limit 1`;
+    const rs = await this.dbService.execute<Tag[]>(sql, [id]);
+    return rs[0];
   }
 
-  async create(data: TagCreateDto) {
-    return await Tag.save(Tag.create(data));
+  async create(data: Partial<Tag>) {
+    const sql = `insert into tags(id, name, slug, createdAt, updatedAt) values (?,?,?,?,?)`;
+    const dateTime = dayjs().format('YYYY-MM-DD HH:mm:ss');
+    const id = randomStringGenerator();
+    const rs = await this.dbService.execute<ResultSetHeader>(sql, [
+      id,
+      data.name,
+      data.slug,
+      dateTime,
+      dateTime,
+    ]);
+
+    return this.getById(id);
   }
 
   async getAllTag() {
-    return await Tag.findAndCount();
+    const sql = `select * from tags`;
+    return await this.dbService.execute<Tag[]>(sql, []);
   }
 
-  async delete(id: number) {
-    const instance = await Tag.findOne(id, {
-      relations: ['questionTags'],
-    });
-    checkResource(instance, new Tag());
-
-    // delete the tag associated in questions_tags table
-    for (const questionTag of instance.questionTags) {
-      await this.questionsTagsService.delete(questionTag.id);
-    }
-
-    const rs = await Tag.delete(instance.id);
-    return rs.affected > 0;
+  async delete(id) {
+    const sql = `delete from tags where id = ?`;
+    const rs = await this.dbService.execute<ResultSetHeader>(sql, [id]);
+    return rs.affectedRows > 0;
   }
 
-  async update(id: number, data: TagUpdateDto) {
-    const instance = await Tag.findOne(id);
-    checkResource(instance, new Tag());
+  async update(id, data: Partial<Tag>) {
+    const sql = `update tags set name = ?, slug = ?, updatedAt =? where id =?`;
+    const updatedAt = dayjs().format('YYYY-MM-DD HH:mm:ss');
+    const rs = this.dbService.execute<ResultSetHeader>(sql, [
+      data.name,
+      data.slug,
+      updatedAt,
+      id,
+    ]);
 
-    await Tag.merge(instance, data).save();
-    return this.view(id);
+    return this.getById(id);
   }
 
   async getQuestions(tagId: number, queryParam) {

@@ -9,22 +9,23 @@ Content-Type: application/json
 }
 
 ### update tag
-PUT {{host}}/tags/56b24c25-e90c-4925-9068-09382f67f8b4
+PUT {{host}}/tags/8da939d7-670f-4b2f-ad38-62675b396bcb
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-  "name": "数学"
+  "name": "数学",
+  "slug": "shu-xue"
 }
 
 ### get one
-GET {{host}}/tags/56b24c25-e90c-4925-9068-09382f67f8b4
+GET {{host}}/tags/4675b0cf-4781-49bf-89f0-e63cb9ed05ee
 
 ### get all
 GET {{host}}/tags
 
 ### delete
-DELETE {{host}}/tags/d98c6f2e-595a-4524-ab99-325afe95a044
+DELETE {{host}}/tags/455836aa-7081-4cb9-a492-288f6f4c3f86
 
 ### get questions of tag
 GET {{host}}/tags/56b24c25-e90c-4925-9068-09382f67f8b4/questions?current=1&per=2

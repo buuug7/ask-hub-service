@@ -83,58 +83,58 @@ export class FakerService {
    * faker questions
    */
   async createQuestions() {
-    const user1 = await User.findOne({
-      where: { email: 'ask@dev.com' },
-    });
-
-    const user2 = await User.findOne({
-      where: { email: 'youpp@126.com' },
-    });
-
-    const tags: Tag[] = await Tag.find();
-    const questions = [];
-
-    for (let i = 0; i < 50; i++) {
-      questions.push(
-        await this.questionsService.create({
-          title: faker.lorem.words(),
-          description: faker.lorem.paragraphs(),
-          user: { id: i % 2 ? user1.id : user2.id },
-          tags: [...tags.slice(0, i % 2 ? 4 : 8)],
-        }),
-      );
-    }
-
-    return questions;
+    // const user1 = await User.findOne({
+    //   where: { email: 'ask@dev.com' },
+    // });
+    //
+    // const user2 = await User.findOne({
+    //   where: { email: 'youpp@126.com' },
+    // });
+    //
+    // const tags: Tag[] = await Tag.find();
+    // const questions = [];
+    //
+    // for (let i = 0; i < 50; i++) {
+    //   questions.push(
+    //     await this.questionsService.create({
+    //       title: faker.lorem.words(),
+    //       description: faker.lorem.paragraphs(),
+    //       user: { id: i % 2 ? user1.id : user2.id },
+    //       tags: [...tags.slice(0, i % 2 ? 4 : 8)],
+    //     }),
+    //   );
+    // }
+    //
+    // return questions;
   }
 
   /**
    * faker answers
    */
   async createAnswers() {
-    const { data: questions } = await this.questionsService.list({
-      perPage: 5,
-    });
-
-    const user1 = await User.findOne({
-      where: { email: 'ask@dev.com' },
-    });
-
-    const user2 = await User.findOne({
-      where: { email: 'youpp@126.com' },
-    });
-
-    const answers = [];
-    for (let i = 0; i < 50; i++) {
-      answers.push(
-        await this.answersService.create({
-          text: faker.lorem.paragraphs(),
-          question: i % 2 === 0 ? questions[1] : questions[4],
-          user: { id: i % 2 ? user1.id : user2.id },
-        }),
-      );
-    }
-
-    return answers;
+    // const { data: questions } = await this.questionsService.list({
+    //   perPage: 5,
+    // });
+    //
+    // const user1 = await User.findOne({
+    //   where: { email: 'ask@dev.com' },
+    // });
+    //
+    // const user2 = await User.findOne({
+    //   where: { email: 'youpp@126.com' },
+    // });
+    //
+    // const answers = [];
+    // for (let i = 0; i < 50; i++) {
+    //   answers.push(
+    //     await this.answersService.create({
+    //       text: faker.lorem.paragraphs(),
+    //       question: i % 2 === 0 ? questions[1] : questions[4],
+    //       user: { id: i % 2 ? user1.id : user2.id },
+    //     }),
+    //   );
+    // }
+    //
+    // return answers;
   }
 }

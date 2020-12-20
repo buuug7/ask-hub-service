@@ -10,7 +10,7 @@ Content-Type: application/json
 }
 
 ### update
-PUT {{host}}/questions/45aa5435-93c2-4469-ac9c-a8000fa184f8
+PUT {{host}}/questions/2e51af7b-dd0f-4db4-8eff-203b81b8acce
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
@@ -34,7 +34,7 @@ GET {{host}}/questions?perPage=3&currentPage=2&search={"username": "buuug7", "mo
 GET {{host}}/questions/analysis/getByMostAnswers
 
 ### delete
-DELETE {{host}}/questions/bc531943-1ca6-4217-9b85-88e3c30e507e
+DELETE {{host}}/questions/2e51af7b-dd0f-4db4-8eff-203b81b8acce
 Authorization: Bearer {{token}}
 
 ### get question tags

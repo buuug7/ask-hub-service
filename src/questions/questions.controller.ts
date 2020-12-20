@@ -35,12 +35,18 @@ export class QuestionsController {
     @Body() updateForm: QuestionUpdateDto,
     @Req() req: Request,
   ) {
-    return this.questionsService.update(id, updateForm, req.user);
+    return this.questionsService.update(id, {
+      ...updateForm,
+      user: {
+        // @ts-ignore
+        id: req.user.id,
+      },
+    });
   }
 
   @Get(':id')
   async view(@Param('id') id) {
-    return this.questionsService.view(id);
+    return this.questionsService.getById(id);
   }
 
   @Get()

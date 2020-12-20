@@ -4,7 +4,7 @@ import { Question } from '../questions/question.entity';
 import { Tag } from '../tags/tag.entity';
 import { simplePagination } from '../utils';
 import { createQueryBuilder } from 'typeorm';
-import { PaginationParam } from '../app.interface';
+import { PaginationParam } from '../app.type';
 
 @Injectable()
 export class QuestionsTagsService {

@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { UserAnswerStar } from './user-answer-star.entity';
 import { createQueryBuilder } from 'typeorm';
 import { simplePagination } from '../utils';
-import { PaginationParam } from '../app.interface';
+import { PaginationParam } from '../app.type';
 
 @Injectable()
 export class UsersAnswersStarService {

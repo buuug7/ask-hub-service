@@ -28,3 +28,8 @@ export interface QuestionSearchParam {
   };
   username?: string;
 }
+
+export enum ResourceStatus {
+  BLOCK = 0,
+  ACTIVE = 1,
+}

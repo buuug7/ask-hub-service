@@ -1,6 +1,6 @@
 import { BaseEntity, SelectQueryBuilder } from 'typeorm';
 import { ForbiddenException, HttpException, HttpStatus } from '@nestjs/common';
-import { Pagination, PaginationParam } from './app.interface';
+import { Pagination, PaginationParam } from './app.type';
 import { User } from './users/user.entity';
 import { Question } from './questions/question.entity';
 import { Answer } from './answers/answer.entity';

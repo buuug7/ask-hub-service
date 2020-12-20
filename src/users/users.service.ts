@@ -1,5 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { User } from './users.interface';
+import { User } from './users.type';
 import { hashSync } from 'bcrypt';
 import DbService from '../db.service';
 import * as dayjs from 'dayjs';

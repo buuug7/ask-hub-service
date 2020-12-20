@@ -5,7 +5,7 @@ import { checkPermission, checkResource, simplePagination } from '../utils';
 import { QuestionsService } from '../questions/questions.service';
 import { createQueryBuilder } from 'typeorm';
 import { UsersAnswersStarService } from '../users-answers-star/users-answers-star.service';
-import { PaginationParam } from '../app.interface';
+import { PaginationParam } from '../app.type';
 import { User } from '../users/user.entity';
 
 @Injectable()

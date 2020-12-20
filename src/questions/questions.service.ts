@@ -6,7 +6,7 @@ import { createQueryBuilder } from 'typeorm';
 import { checkPermission, checkResource, simplePagination } from '../utils';
 import { Tag } from '../tags/tag.entity';
 import { AnswersService } from '../answers/answers.service';
-import { PaginationParam, QuestionSearchParam } from '../app.interface';
+import { PaginationParam, QuestionSearchParam } from '../app.type';
 import { User } from '../users/user.entity';
 
 @Injectable()

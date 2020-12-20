@@ -7,6 +7,7 @@ import { UserCreateDto } from '../users/users.dto';
 import { TagsService } from '../tags/tags.service';
 import { QuestionsService } from '../questions/questions.service';
 import { AnswersService } from '../answers/answers.service';
+import DbService from '../db.service';
 
 @Injectable()
 export class FakerService {
@@ -15,7 +16,19 @@ export class FakerService {
     private tagsService: TagsService,
     private questionsService: QuestionsService,
     private answersService: AnswersService,
+    private dbService: DbService,
   ) {}
+
+  async test() {
+    const sql = `select * from users where email = ?`;
+    const [row, fields] = await this.dbService.connection.execute(sql, [
+      'youpp@126.com',
+    ]);
+    return {
+      row: row,
+      fields: fields,
+    };
+  }
 
   /**
    * faker users

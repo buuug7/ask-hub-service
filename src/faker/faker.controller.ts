@@ -8,6 +8,11 @@ import { FakerService } from './faker.service';
 export class FakerController {
   constructor(private fakerService: FakerService) {}
 
+  @Get('/test')
+  test() {
+    return this.fakerService.test();
+  }
+
   @Get('/create/users')
   async createUsers() {
     return this.fakerService.createUser();

@@ -1,11 +1,16 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { User } from './user.entity';
-import { UserCreateDto } from './users.dto';
+import { User } from './users.interface';
 import { hashSync } from 'bcrypt';
+import DbService from '../db.service';
+import * as dayjs from 'dayjs';
+import { randomStringGenerator } from '@nestjs/common/utils/random-string-generator.util';
+import { ResultSetHeader } from 'mysql2';
 
 @Injectable()
 export class UsersService {
-  async create(data: UserCreateDto) {
+  constructor(private dbService: DbService) {}
+
+  async create(data: Partial<User>) {
     const exists = await this.findByEmail(data.email);
 
     if (exists) {
@@ -17,30 +22,42 @@ export class UsersService {
       );
     }
 
-    const instance = await User.save(
-      User.create({
-        ...data,
-        password: hashSync(data.password, 3),
-      }),
-    );
+    const sql = `insert into users(id,name, email, password, active, loginFrom, createdAt, updatedAt) values (?,?,?,?,?,?,?,?)`;
+    const dateTime = dayjs().format('YYYY-MM-DD HH:mm:ss');
 
-    return this.profile(instance.email);
+    const rs = await this.dbService.execute<ResultSetHeader>(sql, [
+      randomStringGenerator(),
+      data.name,
+      data.email,
+      hashSync(data.password, 3),
+      '1',
+      JSON.stringify({}),
+      dateTime,
+      dateTime,
+    ]);
+
+    return this.profile(data.email);
   }
 
-  async findByEmail(email: string): Promise<User> {
-    return await User.findOne({
-      where: {
-        email: email,
-      },
-    });
+  async findByEmail(email: string) {
+    const sql = `select * from users where email = ? limit 1`;
+    const rs = await this.dbService.execute<User[]>(sql, [email]);
+
+    if (rs.length <= 0) {
+      return null;
+    }
+    return rs[0];
   }
 
   async profile(email: string): Promise<Partial<User>> {
-    const rs = await User.findOne({
-      where: { email: email },
-      select: ['id', 'name', 'email', 'createdAt'],
-    });
+    const user = await this.findByEmail(email);
 
-    return rs;
+    return {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      active: user.active,
+      createdAt: user.createdAt,
+    };
   }
 }

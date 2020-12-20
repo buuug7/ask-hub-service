@@ -17,17 +17,11 @@ export class FakerService {
     private questionsService: QuestionsService,
     private answersService: AnswersService,
     private dbService: DbService,
-  ) {}
+  ) {
+  }
 
   async test() {
-    const sql = `select * from users where email = ?`;
-    const [row, fields] = await this.dbService.connection.execute(sql, [
-      'youpp@126.com',
-    ]);
-    return {
-      row: row,
-      fields: fields,
-    };
+    return this.userService.findByEmail('youpp@126.com');
   }
 
   /**

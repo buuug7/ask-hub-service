@@ -4,9 +4,16 @@ Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-  "title": "wind force",
-  "description": "DIABLO wind force",
-  "tags": []
+  "title": "are every read force",
+  "description": "Diablo",
+  "tags": [
+    {
+      "id": "8da939d7-670f-4b2f-ad38-62675b396bcb"
+    },
+    {
+      "id": "97468664-dacf-4bfe-ad74-8a4658f295d8"
+    }
+  ]
 }
 
 ### update
@@ -25,7 +32,7 @@ Content-Type: application/json
 }
 
 ### get by id
-GET {{host}}/questions/59513087-402b-49ad-aa6d-b546f505d5b5
+GET {{host}}/questions/57a6f84a-0194-40fe-8539-7cc754b333a7
 
 ### get list
 GET {{host}}/questions?perPage=3&currentPage=2&search={"username": "buuug7", "mostAnswer": true}

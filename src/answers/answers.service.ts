@@ -1,95 +1,88 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
-import { AnswerCreateDto, AnswerUpdateDto } from './answers.dto';
-import { Answer } from './answer.entity';
-import { checkPermission, checkResource, simplePagination } from '../utils';
+import { Answer } from './answers.type';
 import { QuestionsService } from '../questions/questions.service';
-import { createQueryBuilder } from 'typeorm';
-import { UsersAnswersStarService } from '../users-answers-star/users-answers-star.service';
-import { PaginationParam } from '../app.type';
-import { User } from '../users/user.entity';
+import DbService from '../db.service';
+import { randomStringGenerator } from '@nestjs/common/utils/random-string-generator.util';
+import * as dayjs from 'dayjs';
+import { ResultSetHeader } from 'mysql2';
 
 @Injectable()
 export class AnswersService {
   constructor(
     @Inject(forwardRef(() => QuestionsService))
     private questionsService: QuestionsService,
-    private usersAnswersStarService: UsersAnswersStarService,
+    private dbService: DbService,
   ) {}
 
   /**
    * return one answer with relation
    * @param id
    */
-  async view(id: string) {
-    const instance = await Answer.findOne(id, {
-      relations: ['user', 'question'],
-    });
-    checkResource(instance, new Answer());
-
-    return instance;
+  async findById(id: string) {
+    const sql = `select *
+                 from answers
+                 where id = ?
+                 limit 1`;
+    const rs = await this.dbService.execute<Answer[]>(sql, [id]);
+    return rs[0];
   }
 
-  async create(data: AnswerCreateDto) {
-    // throw Exception if no question found
-    await this.questionsService.findOne(data.question.id);
+  async create(data: Partial<Answer>) {
+    const sql = `insert into answers(id, text, active, createdAt, updatedAt, questionId, userId)
+                 values (?, ?, ?, ?, ?, ?, ?)`;
+    const id = randomStringGenerator();
+    const dateTime = dayjs().format('YYYY-MM-DD HH:mm:ss');
+    const rs = await this.dbService.execute<ResultSetHeader>(sql, [
+      id,
+      data.text,
+      '1',
+      dateTime,
+      dateTime,
+      data.question.id,
+      data.user.id,
+    ]);
 
-    const instance = await Answer.save(
-      Answer.create({
-        ...data,
-      }),
-    );
-
-    return this.view(instance.id);
+    return this.findById(id);
   }
 
-  async update(id: number, data: AnswerUpdateDto, user: Partial<User>) {
-    const instance = await Answer.findOne(id);
-
-    checkResource(instance, new Answer());
-    checkPermission(instance, user);
-
-    await Answer.merge(instance, data).save();
-    return this.view(instance.id);
+  async update(id: string, data: Partial<Answer>) {
+    const sql = `update answers
+                 set text      = ?,
+                     updatedAt = ?
+                 where id = ?`;
+    const updatedAt = dayjs().format('YYYY-MM-DD HH:mm:ss');
+    const rs = await this.dbService.execute(sql, [data.text, updatedAt, id]);
+    return this.findById(id);
   }
+
+
 
   /**
    * get answers of specified question
    * @param questionId
    * @param queryParam
    */
-  async getAnswersByQuestion(questionId: string, queryParam: PaginationParam) {
-    const query = createQueryBuilder(Answer);
-
-    query.leftJoinAndSelect('Answer.user', 'User', 'Answer.userId = User.id');
-    query.where('Answer.questionId = :questionId', {
-      questionId: questionId,
-    });
-
-    return simplePagination(query, queryParam);
-  }
+  // async getAnswersByQuestion(questionId: string, queryParam: PaginationParam) {
+  //   const query = createQueryBuilder(Answer);
+  //
+  //   query.leftJoinAndSelect('Answer.user', 'User', 'Answer.userId = User.id');
+  //   query.where('Answer.questionId = :questionId', {
+  //     questionId: questionId,
+  //   });
+  //
+  //   return simplePagination(query, queryParam);
+  // }
 
   /**
    * delete resource
    * @param id
-   * @param user
    */
-  async delete(id: string, user: Partial<User>) {
-    const instance = await Answer.findOne(id);
-    checkResource(instance, new Answer());
-    checkPermission(instance, user);
-    const rs = await Answer.delete(instance.id);
-    return rs.affected > 0;
-  }
-
-  /**
-   * delete answer without check permission
-   * @param id
-   */
-  async deleteWithoutPermission(id: string) {
-    const instance = await Answer.findOne(id);
-    checkResource(instance, new Answer());
-    const rs = await Answer.delete(instance.id);
-    return rs.affected > 0;
+  async delete(id: string) {
+    const sql = `delete
+                 from answers
+                 where id = ?`;
+    const rs = await this.dbService.execute<ResultSetHeader>(sql, [id]);
+    return rs.affectedRows > 0;
   }
 
   /**
@@ -98,7 +91,8 @@ export class AnswersService {
    * @param userId
    */
   async star(answerId: string, userId: string) {
-    await this.usersAnswersStarService.create(answerId, userId);
+    const sql = `insert into answers_users_star(answerId, userId) values (?, ?)`;
+    const rs = await this.dbService.execute(sql, [answerId, userId]);
     return this.starCount(answerId);
   }
 
@@ -108,11 +102,14 @@ export class AnswersService {
    * @param userId
    */
   async unStar(answerId: string, userId: string) {
-    const instance = await this.usersAnswersStarService.findOne(
+    const sql = `delete
+                 from answers_users_star
+                 where answerId = ?
+                   and userId = ?`;
+    const rs = await this.dbService.execute<ResultSetHeader>(sql, [
       answerId,
       userId,
-    );
-    await this.usersAnswersStarService.delete(instance.id);
+    ]);
     return this.starCount(answerId);
   }
 
@@ -137,7 +134,9 @@ export class AnswersService {
    * @param answerId
    */
   async starCount(answerId: string) {
-    return this.usersAnswersStarService.getUserCountByAnswer(answerId);
+    const sql = `select count(*) as count from answers_users_star where answerId = ?`;
+    const rs = await this.dbService.execute(sql, [answerId]);
+    return rs[0];
   }
 
   /**
@@ -145,12 +144,12 @@ export class AnswersService {
    * @param answerId
    * @param userId
    */
-  async isStarByGivenUser(answerId: string, userId: string): Promise<boolean> {
-    const instance = await this.usersAnswersStarService.findOne(
-      answerId,
-      userId,
-    );
-
-    return instance !== undefined;
+  async isStarByGivenUser(answerId: string, userId: string) {
+    const sql = `select *
+                 from answers_users_star
+                 where answerId = ?
+                   and userId = ?`;
+    const rs = await this.dbService.execute<Answer[]>(sql, [answerId, userId]);
+    return rs.length > 0;
   }
 }

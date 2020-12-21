@@ -39,6 +39,16 @@ export class UsersService {
     return this.profile(data.email);
   }
 
+  async findById(id: string) {
+    const sql = `select * from users where id = ? limit 1`;
+    const rs = await this.dbService.execute<User[]>(sql, [id]);
+
+    if (rs.length <= 0) {
+      return null;
+    }
+    return rs[0];
+  }
+
   async findByEmail(email: string) {
     const sql = `select * from users where email = ? limit 1`;
     const rs = await this.dbService.execute<User[]>(sql, [email]);

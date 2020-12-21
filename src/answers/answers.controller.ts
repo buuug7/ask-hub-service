@@ -29,18 +29,18 @@ export class AnswersController {
   @Put(':id')
   @UseGuards(AuthGuard('jwt'))
   async update(@Param('id') id, @Body() form, @Req() req : Request) {
-    return this.answersService.update(id, form, req.user);
+    return this.answersService.update(id, form);
   }
 
   @Get(':id')
   async view(@Param('id') id) {
-    return this.answersService.view(id);
+    return this.answersService.findById(id);
   }
 
   @Delete(':id')
   @UseGuards(AuthGuard('jwt'))
   async delete(@Param('id') id, @Req() req: Request) {
-    return this.answersService.delete(id, req.user);
+    return this.answersService.delete(id);
   }
 
   @Post(':id/star')

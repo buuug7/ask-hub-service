@@ -10,7 +10,6 @@ import {
 } from 'typeorm';
 import { Question } from '../questions/question.entity';
 import { User } from '../users/user.entity';
-import { UserAnswerStar } from '../users-answers-star/user-answer-star.entity';
 import { Exclude } from 'class-transformer';
 
 /**
@@ -52,12 +51,6 @@ export class Answer extends BaseEntity {
     user => user.answers,
   )
   user: User;
-
-  @OneToMany(
-    type => UserAnswerStar,
-    userAnswerStar => userAnswerStar.answer,
-  )
-  userAnswerStars: UserAnswerStar[];
 
   @BeforeInsert()
   beforeInsertQuestion() {

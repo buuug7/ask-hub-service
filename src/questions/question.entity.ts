@@ -12,7 +12,6 @@ import {
 import { User } from '../users/user.entity';
 import { Answer } from '../answers/answer.entity';
 import { QuestionTag } from '../questions-tags/question-tag.entity';
-import { UserQuestionWatch } from '../users-questions-watches/user-question-watch.entity';
 import { Exclude } from 'class-transformer';
 
 /**
@@ -56,12 +55,6 @@ export class Question extends BaseEntity {
 
   @OneToMany((type) => QuestionTag, (questionTag) => questionTag.question)
   questionTags: QuestionTag[];
-
-  @OneToMany(
-    (type) => UserQuestionWatch,
-    (userQuestionWatch) => userQuestionWatch.question,
-  )
-  userQuestionWatches: UserQuestionWatch[];
 
   @BeforeInsert()
   beforeInsertQuestion() {

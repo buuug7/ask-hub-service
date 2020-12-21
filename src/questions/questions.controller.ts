@@ -46,7 +46,7 @@ export class QuestionsController {
 
   @Get(':id')
   async view(@Param('id') id) {
-    return this.questionsService.getById(id);
+    return this.questionsService.getByIdWithRelation(id);
   }
 
   @Get()
@@ -62,12 +62,12 @@ export class QuestionsController {
 
   @Get(':id/tags')
   async tags(@Param('id') id) {
-    return this.questionsService.getQuestionTags(id);
+    return this.questionsService.getTags(id);
   }
 
   @Get(':id/answers')
-  async answers(@Param('id') id, @Query() query) {
-    return this.questionsService.getAnswersByQuestion(id, query);
+  async answers(@Param('id') id) {
+    return this.questionsService.getAnswers(id);
   }
 
   @Get('/analysis/getByMostAnswers')

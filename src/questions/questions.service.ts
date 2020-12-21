@@ -1,5 +1,5 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
-import { Question } from './questions.type';
+import { Question, QuestionTag } from './questions.type';
 import { QuestionsTagsService } from '../questions-tags/questions-tags.service';
 import { createQueryBuilder } from 'typeorm';
 import { Tag } from '../tags/tag.entity';
@@ -10,6 +10,8 @@ import DbService from '../db.service';
 import { randomStringGenerator } from '@nestjs/common/utils/random-string-generator.util';
 import * as dayjs from 'dayjs';
 import { ResultSetHeader } from 'mysql2';
+import { Answer } from '../answers/answers.type';
+import { UsersService } from '../users/users.service';
 
 @Injectable()
 export class QuestionsService {
@@ -18,36 +20,30 @@ export class QuestionsService {
     @Inject(forwardRef(() => AnswersService))
     private answersService: AnswersService,
     private dbService: DbService,
+    private userService: UsersService,
   ) {}
 
   /**
    * return one question with relations
    * @param id
    */
-  async getById(id: string) {
+  async getById(id: string): Promise<Question> {
+    // query question
     const sql = `select * from questions where id = ? limit 1`;
-    const rs = await this.dbService.execute<Question[]>(sql, [id]);
+    const questions = await this.dbService.execute<Question[]>(sql, [id]);
+    return questions[0];
+  }
 
-    return rs[0];
+  async getByIdWithRelation(id: string) {
+    const question = await this.getById(id);
+    const user = await this.userService.findById(question.userId);
+    const tags = await this.getTags(question.id);
 
-    // const instance = await Question.findOne(id, {
-    //   relations: ['user', 'answers', 'questionTags'],
-    // });
-    //
-    // checkResource(instance, new Question());
-    //
-    // const tags = instance.questionTags.map((item) => {
-    //   return {
-    //     ...item.tag,
-    //   };
-    // });
-    //
-    // delete instance.questionTags;
-    //
-    // return {
-    //   ...instance,
-    //   tags: tags,
-    // };
+    return {
+      ...question,
+      user,
+      tags,
+    };
   }
 
   /**
@@ -67,26 +63,55 @@ export class QuestionsService {
       dateTime,
       data.user.id,
     ]);
-    console.log('rsquestion', rs);
+
+    // attach tag
+    if (data.tags.length > 0) {
+      for (const tag of data.tags) {
+        await this.attachTag(id, tag.id);
+      }
+    }
 
     return this.getById(id);
-
-    // const tags = data.tags;
-    //
-    // const question = await Question.save(
-    //   Question.create({
-    //     ...data,
-    //   }),
-    // );
-    //
-    // await this.addTags(question, tags);
-    // return this.view(question.id);
   }
 
-  async addTags(question: Question, tags: Tag[]) {
-    for (const tag of tags) {
-      await this.questionsTagsService.create(question.id, tag.id);
+  async isAttachedByGivenTag(questionId, tagId) {
+    const sql = `select * from questions_tags where questionId = ? and tagId = ?`;
+    const rs = await this.dbService.execute<QuestionTag[]>(sql, [
+      questionId,
+      tagId,
+    ]);
+    return rs.length > 0;
+  }
+
+  async toggleTag(questionId, tagId) {
+    const isAttachedByGivenTag = await this.isAttachedByGivenTag(
+      questionId,
+      tagId,
+    );
+    if (isAttachedByGivenTag) {
+      await this.detachTag(questionId, tagId);
+    } else {
+      await this.attachTag(questionId, tagId);
     }
+  }
+
+  async attachTag(questionId, tagId) {
+    const sql = `insert into questions_tags(questionId, tagId) values (?, ?)`;
+    const rs = await this.dbService.execute<ResultSetHeader>(sql, [
+      questionId,
+      tagId,
+    ]);
+    return rs.affectedRows > 0;
+  }
+
+  async detachTag(questionId, tagId) {
+    const sql = `delete from questions_tags where questionId = ? and tagId = ?`;
+    const rs = await this.dbService.execute<ResultSetHeader>(sql, [
+      questionId,
+      tagId,
+    ]);
+
+    return rs.affectedRows > 0;
   }
 
   async update(id: string, data: Partial<Question>) {
@@ -99,28 +124,13 @@ export class QuestionsService {
       id,
     ]);
 
+    // update related tags
+    if (data.tags.length > 0) {
+      for (const tag of data.tags) {
+        await this.toggleTag(id, tag.id);
+      }
+    }
     return this.getById(id);
-    // const question = await Question.findOne(id, {
-    //   relations: ['questionTags'],
-    // });
-    // checkResource(question, new Question());
-    // checkPermission(question, user);
-    //
-    // // update
-    // await Question.merge(question, data).save();
-    // const newTags = data.tags || [];
-    //
-    // // delete old tags
-    // for (const questionTag of question.questionTags) {
-    //   await this.questionsTagsService.delete(questionTag.id);
-    // }
-    //
-    // // add new tags
-    // if (newTags?.length > 0) {
-    //   await this.addTags(question, newTags);
-    // }
-    //
-    // return this.view(id);
   }
 
   async getByMostAnswers(limit: number) {
@@ -200,33 +210,20 @@ export class QuestionsService {
     return rs.affectedRows > 0;
   }
 
-  async getQuestionTags(id: number) {
-    // const instance = await Question.findOne(id);
-    // checkResource(instance, new Question());
-    //
-    // return this.questionsTagsService.getTagsByQuestion(instance);
-  }
-
-  /**
-   * return question without relations
-   * @param id
-   */
-  async findOne(id: string) {
-    // const instance = await Question.findOne(id);
-    // checkResource(instance, new Question());
-    //
-    // return instance;
+  async getTags(questionId: string) {
+    const sql = `select t.*
+                  from questions_tags qt
+                           left join tags t on qt.tagId = t.id
+                  where qt.questionId = ?`;
+    return await this.dbService.execute<Tag[]>(sql, [questionId]);
   }
 
   /**
    * get answers of specified question
-   * @param id
-   * @param queryParam
+   * @param questionId
    */
-  async getAnswersByQuestion(id: string, queryParam: PaginationParam) {
-    // check question id is validate
-    await this.findOne(id);
-
-    return this.answersService.getAnswersByQuestion(id, queryParam);
+  async getAnswers(questionId) {
+    const sql = `select * from answers where questionId = ?`;
+    return await this.dbService.execute<Answer[]>(sql, [questionId]);
   }
 }

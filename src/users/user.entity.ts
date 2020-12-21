@@ -9,8 +9,6 @@ import {
 } from 'typeorm';
 import { Question } from '../questions/question.entity';
 import { Answer } from '../answers/answer.entity';
-import { UserAnswerStar } from '../users-answers-star/user-answer-star.entity';
-import { UserQuestionWatch } from '../users-questions-watches/user-question-watch.entity';
 
 @Entity({
   name: 'users',
@@ -75,18 +73,6 @@ export class User extends BaseEntity {
     answer => answer.user,
   )
   answers: Answer[];
-
-  @OneToMany(
-    type => UserAnswerStar,
-    userAnswerStar => userAnswerStar.user,
-  )
-  userAnswerStars: UserAnswerStar[];
-
-  @OneToMany(
-    type => UserQuestionWatch,
-    userQuestionWatch => userQuestionWatch.user,
-  )
-  userQuestionWatches: UserQuestionWatch[];
 
   @BeforeInsert()
   beforeInsertTag() {

@@ -55,8 +55,6 @@ export class AnswersService {
     return this.findById(id);
   }
 
-
-
   /**
    * get answers of specified question
    * @param questionId

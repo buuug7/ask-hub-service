@@ -1,18 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { Tag } from './tag.entity';
-import { checkResource } from '../utils';
-import { QuestionsTagsService } from '../questions-tags/questions-tags.service';
 import DbService from '../db.service';
 import { randomStringGenerator } from '@nestjs/common/utils/random-string-generator.util';
 import * as dayjs from 'dayjs';
 import { ResultSetHeader } from 'mysql2';
+import { Question } from '../questions/questions.type';
+import { Tag } from './tags.type';
 
 @Injectable()
 export class TagsService {
-  constructor(
-    private questionsTagsService: QuestionsTagsService,
-    private dbService: DbService,
-  ) {}
+  constructor(private dbService: DbService) {}
 
   async getById(id) {
     const sql = `select * from tags where id = ? limit 1`;
@@ -59,10 +55,15 @@ export class TagsService {
     return this.getById(id);
   }
 
-  async getQuestions(tagId: number, queryParam) {
-    const instance = await Tag.findOne(tagId);
-    checkResource(instance, new Tag());
-
-    return this.questionsTagsService.getQuestionsByTag(instance, queryParam);
+  /**
+   * get question by tagId
+   * @param tagId
+   */
+  async getQuestions(tagId: string) {
+    const sql = `select q.*
+                 from questions q
+                          left join questions_tags qt on q.id = qt.questionId
+                 where qt.tagId = ?`;
+    return await this.dbService.execute<Question[]>(sql, [tagId]);
   }
 }

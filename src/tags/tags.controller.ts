@@ -41,6 +41,6 @@ export class TagsController {
 
   @Get(':id/questions')
   async getQuestionByTag(@Param('id') id, @Query() queryParam) {
-    return this.tagsService.getQuestions(id, queryParam);
+    return this.tagsService.getQuestions(id);
   }
 }

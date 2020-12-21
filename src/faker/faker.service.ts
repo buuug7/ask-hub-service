@@ -1,13 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { User } from '../users/user.entity';
 import * as faker from 'faker';
-import { Tag } from '../tags/tag.entity';
 import { UsersService } from '../users/users.service';
-import { UserCreateDto } from '../users/users.dto';
 import { TagsService } from '../tags/tags.service';
 import { QuestionsService } from '../questions/questions.service';
 import { AnswersService } from '../answers/answers.service';
 import DbService from '../db.service';
+import { Tag } from '../tags/tags.type';
 
 @Injectable()
 export class FakerService {
@@ -17,8 +15,7 @@ export class FakerService {
     private questionsService: QuestionsService,
     private answersService: AnswersService,
     private dbService: DbService,
-  ) {
-  }
+  ) {}
 
   async test() {
     return this.userService.findByEmail('youpp@126.com');
@@ -28,7 +25,7 @@ export class FakerService {
    * faker users
    */
   async createUser() {
-    const users: UserCreateDto[] = [
+    const users = [
       {
         name: 'Buuug7',
         email: 'youpp@126.com',

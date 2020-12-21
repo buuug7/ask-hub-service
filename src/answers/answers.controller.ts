@@ -28,7 +28,7 @@ export class AnswersController {
 
   @Put(':id')
   @UseGuards(AuthGuard('jwt'))
-  async update(@Param('id') id, @Body() form, @Req() req : Request) {
+  async update(@Param('id') id, @Body() form, @Req() req: Request) {
     return this.answersService.update(id, form);
   }
 

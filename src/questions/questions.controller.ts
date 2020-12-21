@@ -12,7 +12,6 @@ import {
 } from '@nestjs/common';
 import { QuestionsService } from './questions.service';
 import { AuthGuard } from '@nestjs/passport';
-import { QuestionCreateDto, QuestionUpdateDto } from './questions.dto';
 import { Request } from 'express';
 
 @Controller('questions')
@@ -30,11 +29,7 @@ export class QuestionsController {
 
   @Put(':id')
   @UseGuards(AuthGuard('jwt'))
-  async update(
-    @Param('id') id,
-    @Body() updateForm: QuestionUpdateDto,
-    @Req() req: Request,
-  ) {
+  async update(@Param('id') id, @Body() updateForm, @Req() req: Request) {
     return this.questionsService.update(id, {
       ...updateForm,
       user: {
@@ -57,7 +52,7 @@ export class QuestionsController {
   @Delete(':id')
   @UseGuards(AuthGuard('jwt'))
   async delete(@Param('id') id, @Req() req: Request) {
-    return this.questionsService.delete(id, req.user);
+    return this.questionsService.delete(id);
   }
 
   @Get(':id/tags')

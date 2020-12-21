@@ -35,7 +35,7 @@ Content-Type: application/json
 GET {{host}}/questions/57a6f84a-0194-40fe-8539-7cc754b333a7
 
 ### get list
-GET {{host}}/questions?perPage=3&currentPage=2&search={"username": "buuug7", "mostAnswer": true}
+GET {{host}}/questions?perPage=3&currentPage=2
 
 ### getByMostAnswers
 GET {{host}}/questions/analysis/getByMostAnswers

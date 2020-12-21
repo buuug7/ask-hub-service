@@ -5,7 +5,7 @@ import { UsersModule } from '../users/users.module';
 import { TagsModule } from '../tags/tags.module';
 import { QuestionsModule } from '../questions/questions.module';
 import { AnswersModule } from '../answers/answers.module';
-import DbService from '../db.service';
+import { DbService } from '../db.service';
 
 @Module({
   imports: [UsersModule, TagsModule, QuestionsModule, AnswersModule],

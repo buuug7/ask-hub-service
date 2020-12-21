@@ -1,6 +1,6 @@
 import { ForbiddenException, HttpException, HttpStatus } from '@nestjs/common';
 import { Pagination, PaginationParam } from './app.type';
-import DbService from './db.service';
+import { DbService } from './db.service';
 import { Question } from './questions/questions.type';
 import { User } from './users/users.type';
 import { Answer } from './answers/answers.type';

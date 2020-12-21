@@ -1,7 +1,7 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { Answer } from './answers.type';
 import { QuestionsService } from '../questions/questions.service';
-import DbService from '../db.service';
+import { DbService } from '../db.service';
 import { randomStringGenerator } from '@nestjs/common/utils/random-string-generator.util';
 import * as dayjs from 'dayjs';
 import { ResultSetHeader } from 'mysql2';
@@ -56,22 +56,6 @@ export class AnswersService {
   }
 
   /**
-   * get answers of specified question
-   * @param questionId
-   * @param queryParam
-   */
-  // async getAnswersByQuestion(questionId: string, queryParam: PaginationParam) {
-  //   const query = createQueryBuilder(Answer);
-  //
-  //   query.leftJoinAndSelect('Answer.user', 'User', 'Answer.userId = User.id');
-  //   query.where('Answer.questionId = :questionId', {
-  //     questionId: questionId,
-  //   });
-  //
-  //   return simplePagination(query, queryParam);
-  // }
-
-  /**
    * delete resource
    * @param id
    */
@@ -89,7 +73,8 @@ export class AnswersService {
    * @param userId
    */
   async star(answerId: string, userId: string) {
-    const sql = `insert into answers_users_star(answerId, userId) values (?, ?)`;
+    const sql = `insert into answers_users_star(answerId, userId)
+                 values (?, ?)`;
     const rs = await this.dbService.execute(sql, [answerId, userId]);
     return this.starCount(answerId);
   }
@@ -132,7 +117,9 @@ export class AnswersService {
    * @param answerId
    */
   async starCount(answerId: string) {
-    const sql = `select count(*) as count from answers_users_star where answerId = ?`;
+    const sql = `select count(*) as count
+                 from answers_users_star
+                 where answerId = ?`;
     const rs = await this.dbService.execute(sql, [answerId]);
     return rs[0];
   }

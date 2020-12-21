@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { User } from './users.type';
 import { hashSync } from 'bcrypt';
-import DbService from '../db.service';
+import { DbService } from '../db.service';
 import * as dayjs from 'dayjs';
 import { randomStringGenerator } from '@nestjs/common/utils/random-string-generator.util';
 import { ResultSetHeader } from 'mysql2';
@@ -22,7 +22,8 @@ export class UsersService {
       );
     }
 
-    const sql = `insert into users(id,name, email, password, active, loginFrom, createdAt, updatedAt) values (?,?,?,?,?,?,?,?)`;
+    const sql = `insert into users(id, name, email, password, active, loginFrom, createdAt, updatedAt)
+                 values (?, ?, ?, ?, ?, ?, ?, ?)`;
     const dateTime = dayjs().format('YYYY-MM-DD HH:mm:ss');
 
     const rs = await this.dbService.execute<ResultSetHeader>(sql, [
@@ -36,11 +37,14 @@ export class UsersService {
       dateTime,
     ]);
 
-    return this.profile(data.email);
+    return this.getProfile(data.email);
   }
 
   async findById(id: string) {
-    const sql = `select * from users where id = ? limit 1`;
+    const sql = `select *
+                 from users
+                 where id = ?
+                 limit 1`;
     const rs = await this.dbService.execute<User[]>(sql, [id]);
 
     if (rs.length <= 0) {
@@ -50,7 +54,10 @@ export class UsersService {
   }
 
   async findByEmail(email: string) {
-    const sql = `select * from users where email = ? limit 1`;
+    const sql = `select *
+                 from users
+                 where email = ?
+                 limit 1`;
     const rs = await this.dbService.execute<User[]>(sql, [email]);
 
     if (rs.length <= 0) {
@@ -59,7 +66,7 @@ export class UsersService {
     return rs[0];
   }
 
-  async profile(email: string): Promise<Partial<User>> {
+  async getProfile(email: string): Promise<Partial<User>> {
     const user = await this.findByEmail(email);
 
     return {

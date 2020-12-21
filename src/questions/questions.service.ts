@@ -2,7 +2,7 @@ import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { Question, QuestionTag } from './questions.type';
 import { AnswersService } from '../answers/answers.service';
 import { PaginationParam } from '../app.type';
-import DbService from '../db.service';
+import { DbService } from '../db.service';
 import { randomStringGenerator } from '@nestjs/common/utils/random-string-generator.util';
 import * as dayjs from 'dayjs';
 import { ResultSetHeader } from 'mysql2';

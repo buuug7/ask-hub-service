@@ -4,7 +4,7 @@ import { UsersService } from '../users/users.service';
 import { TagsService } from '../tags/tags.service';
 import { QuestionsService } from '../questions/questions.service';
 import { AnswersService } from '../answers/answers.service';
-import DbService from '../db.service';
+import { DbService } from '../db.service';
 import { Tag } from '../tags/tags.type';
 
 @Injectable()

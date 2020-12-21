@@ -19,17 +19,17 @@ export class AnswersController {
   constructor(private answersService: AnswersService) {}
   @Post()
   @UseGuards(AuthGuard('jwt'))
-  create(@Body() form, @Req() req: Request) {
+  create(@Body() body, @Req() req: Request) {
     return this.answersService.create({
-      ...form,
+      ...body,
       user: req.user,
     });
   }
 
   @Put(':id')
   @UseGuards(AuthGuard('jwt'))
-  async update(@Param('id') id, @Body() form, @Req() req: Request) {
-    return this.answersService.update(id, form);
+  async update(@Param('id') id, @Body() body, @Req() req: Request) {
+    return this.answersService.update(id, body);
   }
 
   @Get(':id')

@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
-import { AuthPayloadUser } from './auth.interface';
 import { compareSync } from 'bcrypt';
+import { User } from "../users/users.type";
 
 @Injectable()
 export class AuthService {
@@ -22,7 +22,7 @@ export class AuthService {
     return null;
   }
 
-  async login(user: AuthPayloadUser) {
+  async login(user: Partial<User>) {
     return {
       token: this.jwtService.sign({
         id: user.id,

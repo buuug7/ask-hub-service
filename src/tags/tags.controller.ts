@@ -15,13 +15,13 @@ export class TagsController {
   constructor(private tagsService: TagsService) {}
 
   @Post()
-  async create(@Body() form) {
-    return this.tagsService.create(form);
+  async create(@Body() body) {
+    return this.tagsService.create(body);
   }
 
   @Put(':id')
-  async update(@Body() form, @Param('id') id) {
-    return this.tagsService.update(id, form);
+  async update(@Body() body, @Param('id') id) {
+    return this.tagsService.update(id, body);
   }
 
   @Get(':id')
@@ -40,7 +40,7 @@ export class TagsController {
   }
 
   @Get(':id/questions')
-  async getQuestionByTag(@Param('id') id, @Query() queryParam) {
+  async getQuestionByTag(@Param('id') id, @Query() query) {
     return this.tagsService.getQuestions(id);
   }
 }

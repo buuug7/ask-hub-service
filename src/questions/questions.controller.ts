@@ -20,18 +20,18 @@ export class QuestionsController {
 
   @Post()
   @UseGuards(AuthGuard('jwt'))
-  async create(@Body() creatForm, @Req() req: Request) {
+  async create(@Body() body, @Req() req: Request) {
     return this.questionsService.create({
-      ...creatForm,
+      ...body,
       user: req.user,
     });
   }
 
   @Put(':id')
   @UseGuards(AuthGuard('jwt'))
-  async update(@Param('id') id, @Body() updateForm, @Req() req: Request) {
+  async update(@Param('id') id, @Body() body, @Req() req: Request) {
     return this.questionsService.update(id, {
-      ...updateForm,
+      ...body,
       user: {
         // @ts-ignore
         id: req.user.id,
@@ -45,8 +45,8 @@ export class QuestionsController {
   }
 
   @Get()
-  async list(@Query() queryParam) {
-    return this.questionsService.list(queryParam);
+  async list(@Query() query) {
+    return this.questionsService.list(query);
   }
 
   @Delete(':id')
@@ -66,8 +66,8 @@ export class QuestionsController {
   }
 
   @Get('/analysis/getByMostAnswers')
-  async getMostAnswered(@Query() queryParam) {
-    const limit = queryParam.limit || 10;
+  async getMostAnswered(@Query() query) {
+    const limit = query.limit || 10;
     return this.questionsService.getByMostAnswers(limit);
   }
 }

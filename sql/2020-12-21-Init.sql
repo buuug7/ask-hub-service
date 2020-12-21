@@ -46,8 +46,10 @@ create table `answers`
     questionId varchar(191) not null,
     userId     varchar(191) not null,
 
-    constraint `fk_answers_questionId` foreign key (questionId) references questions (id) on update cascade on delete no action,
-    constraint `fk_answers_userId` foreign key (userId) REFERENCES users (id) on update cascade on delete no action
+    constraint `fk_answers_questionId` foreign key (questionId)
+        references questions (id) on update cascade on delete no action,
+    constraint `fk_answers_userId` foreign key (userId)
+        REFERENCES users (id) on update cascade on delete no action
 );
 
 create table `questions_tags`
@@ -56,8 +58,10 @@ create table `questions_tags`
     tagId      varchar(191) not null,
 
     primary key (questionId, tagId),
-    constraint `fk_questions_tags_questionId` foreign key (questionId) references questions (id) on update cascade on delete cascade,
-    constraint `fk_questions_tags_tagId` foreign key (tagId) references tags (id) on update cascade on delete cascade
+    constraint `fk_questions_tags_questionId` foreign key (questionId)
+        references questions (id) on update cascade on delete cascade,
+    constraint `fk_questions_tags_tagId` foreign key (tagId)
+        references tags (id) on update cascade on delete cascade
 );
 
 create table `answers_users_star`
@@ -66,6 +70,8 @@ create table `answers_users_star`
     userId   varchar(191) not null,
 
     primary key (answerId, userId),
-    constraint `fk_answers_users_star_answerId` foreign key (answerId) references answers (id) on update cascade on delete cascade,
-    constraint `fk_answers_users_star_userId` foreign key (userId) references users (id) on update cascade on delete cascade
+    constraint `fk_answers_users_star_answerId` foreign key (answerId)
+        references answers (id) on update cascade on delete cascade,
+    constraint `fk_answers_users_star_userId` foreign key (userId)
+        references users (id) on update cascade on delete cascade
 );

@@ -1,19 +1,21 @@
 import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { Connection, createConnection, RowDataPacket } from 'mysql2/promise';
-
-const config = {
-  host: 'localhost',
-  user: 'test',
-  password: '123456789',
-  database: 'ask_hub',
-};
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
-export default class DbService implements OnModuleInit, OnModuleDestroy {
+export class DbService implements OnModuleInit, OnModuleDestroy {
   conn: Connection;
 
+  constructor(private configService: ConfigService) {}
+
   async onModuleInit() {
-    this.conn = await createConnection(config);
+    this.conn = await createConnection({
+      host: this.configService.get('database.host'),
+      user: this.configService.get('database.user'),
+      password: this.configService.get('database.password'),
+      database: this.configService.get('database.dbname'),
+      // debug: true
+    });
   }
 
   async execute<T>(sql: string, values: string[] = []) {

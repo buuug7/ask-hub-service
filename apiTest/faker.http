@@ -1,7 +1,3 @@
-###
-GET {{host}}/faker/test
-
-
 ### faker users
 GET {{host}}/faker/create/users
 

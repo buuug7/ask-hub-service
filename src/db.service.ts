@@ -1,5 +1,5 @@
 import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
-import { Connection, createConnection, RowDataPacket } from 'mysql2/promise';
+import { Connection, createConnection } from 'mysql2/promise';
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()
@@ -10,10 +10,10 @@ export class DbService implements OnModuleInit, OnModuleDestroy {
 
   async onModuleInit() {
     this.conn = await createConnection({
-      host: this.configService.get('database.host'),
-      user: this.configService.get('database.user'),
-      password: this.configService.get('database.password'),
-      database: this.configService.get('database.dbname'),
+      host: this.configService.get('DB_HOST'),
+      user: this.configService.get('DB_USER'),
+      password: this.configService.get('DB_PASSWORD'),
+      database: this.configService.get('DB_DATABASE'),
       // debug: true
     });
   }

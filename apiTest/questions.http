@@ -37,8 +37,8 @@ GET {{host}}/questions/57a6f84a-0194-40fe-8539-7cc754b333a7
 ### get list
 GET {{host}}/questions?perPage=3&currentPage=2
 
-### getByMostAnswers
-GET {{host}}/questions/analysis/getByMostAnswers
+### get the most answers questions
+GET {{host}}/questions/analysis/getByMostAnswers?limit=5
 
 ### delete
 DELETE {{host}}/questions/2e51af7b-dd0f-4db4-8eff-203b81b8acce
@@ -49,5 +49,3 @@ GET {{host}}/questions/59513087-402b-49ad-aa6d-b546f505d5b5/tags
 
 ### get question answers
 GET {{host}}/questions/e873c799-2e45-4ce8-bf65-ce38f0e1c90b/answers?perPage=10
-
-

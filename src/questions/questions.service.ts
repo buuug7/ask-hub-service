@@ -148,10 +148,6 @@ export class QuestionsService {
     return this.getById(id);
   }
 
-  async getByMostAnswers(limit: number) {
-    // TODO
-  }
-
   /**
    *
    * @param queryParam
@@ -198,5 +194,20 @@ export class QuestionsService {
                  from answers
                  where questionId = ?`;
     return await this.dbService.execute<Answer[]>(sql, [questionId]);
+  }
+
+  /**
+   * 获取评论最多的问题
+   * get the most answers questions
+   * @param limit
+   */
+  async getByMostAnswers(limit) {
+    const sql = `select q.*, count(a.id) as answers
+                 from questions q
+                          left join answers a on q.id = a.questionId
+                 group by q.id
+                 order by answers desc
+                 limit ?`;
+    return await this.dbService.execute<Question[]>(sql, [String(limit)]);
   }
 }

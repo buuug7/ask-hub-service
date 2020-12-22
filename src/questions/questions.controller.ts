@@ -29,11 +29,14 @@ export class QuestionsController {
 
   @Put(':id')
   @UseGuards(AuthGuard('jwt'))
-  async update(@Param('id') id, @Body() body, @Req() req: Request) {
+  async update(
+    @Param('id') id,
+    @Body() body,
+    @Req() req: Request & { user: { id } },
+  ) {
     return this.questionsService.update(id, {
       ...body,
       user: {
-        // @ts-ignore
         id: req.user.id,
       },
     });

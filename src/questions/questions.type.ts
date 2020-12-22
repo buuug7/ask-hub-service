@@ -11,6 +11,7 @@ export interface Question {
   userId: string;
   user: Partial<User> & { id: string };
   tags: Partial<Tag> & { id: string }[];
+  answersCount?: number[];
 }
 
 export interface QuestionTag {

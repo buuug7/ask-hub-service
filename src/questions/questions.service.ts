@@ -90,6 +90,12 @@ export class QuestionsService {
     return rs.length > 0;
   }
 
+  /**
+   * toggle tag
+   * if tag is attached then detach
+   * @param questionId
+   * @param tagId
+   */
   async toggleTag(questionId, tagId) {
     const isAttachedByGivenTag = await this.isAttachedByGivenTag(
       questionId,
@@ -125,6 +131,11 @@ export class QuestionsService {
     return rs.affectedRows > 0;
   }
 
+  /**
+   *
+   * @param id
+   * @param data
+   */
   async update(id: string, data: Partial<Question>) {
     const sql = `update questions
                  set title       = ?,

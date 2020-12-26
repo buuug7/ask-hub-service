@@ -61,10 +61,11 @@ export class FakerService {
   async createTags() {
     const tags: Tag[] = [];
     for (let i = 0; i < 20; i++) {
+      const tag = faker.lorem.words(1);
       tags.push(
         await this.tagsService.create({
-          name: faker.lorem.words(2),
-          slug: faker.lorem.slug(2),
+          name: tag,
+          slug: tag,
         }),
       );
     }

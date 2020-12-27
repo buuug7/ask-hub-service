@@ -34,7 +34,7 @@ export class AnswersController {
 
   @Get(':id')
   async view(@Param('id') id) {
-    return this.answersService.findById(id);
+    return this.answersService.findByIdWithRelation(id);
   }
 
   @Delete(':id')

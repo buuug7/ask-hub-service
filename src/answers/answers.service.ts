@@ -5,6 +5,7 @@ import { DbService } from '../db.service';
 import { randomStringGenerator } from '@nestjs/common/utils/random-string-generator.util';
 import * as dayjs from 'dayjs';
 import { ResultSetHeader } from 'mysql2';
+import { UsersService } from '../users/users.service';
 
 @Injectable()
 export class AnswersService {
@@ -12,6 +13,7 @@ export class AnswersService {
     @Inject(forwardRef(() => QuestionsService))
     private questionsService: QuestionsService,
     private dbService: DbService,
+    private userService: UsersService,
   ) {}
 
   /**
@@ -21,10 +23,23 @@ export class AnswersService {
   async findById(id: string) {
     const sql = `select *
                  from answers
-                 where id = ?
-                 limit 1`;
+                 where id = ? limit 1`;
     const rs = await this.dbService.execute<Answer[]>(sql, [id]);
     return rs[0];
+  }
+
+  /**
+   * get answer with relation
+   * @param id
+   */
+  async findByIdWithRelation(id: string) {
+    const answer = await this.findById(id);
+    const user = await this.userService.findById(answer.userId);
+
+    return {
+      ...answer,
+      user,
+    };
   }
 
   async create(data: Partial<Answer>) {
@@ -121,7 +136,7 @@ export class AnswersService {
                  from answers_users_star
                  where answerId = ?`;
     const rs = await this.dbService.execute(sql, [answerId]);
-    return rs[0];
+    return rs[0]['count'];
   }
 
   /**

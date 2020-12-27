@@ -7,5 +7,6 @@ export interface Answer {
   createdAt: Date;
   updatedAt: Date;
   question: Partial<Question>;
+  userId: string;
   user: Partial<User>;
 }

@@ -68,9 +68,9 @@ export class QuestionsController {
     return this.questionsService.getAnswers(id);
   }
 
-  @Get('/analysis/getByMostAnswers')
-  async getMostAnswered(@Query() query) {
+  @Get('/analysis/getHotQuestions')
+  async getHostQuestions(@Query() query) {
     const limit = query.limit || 10;
-    return this.questionsService.getByMostAnswers(limit);
+    return this.questionsService.getHotQuestions(limit);
   }
 }

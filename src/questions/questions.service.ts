@@ -41,11 +41,13 @@ export class QuestionsService {
     const question = await this.getById(id);
     const user = await this.userService.findById(question.userId);
     const tags = await this.getTags(question.id);
+    const answersCount = await this.getAnswersCount(question.id);
 
     return {
       ...question,
       user,
       tags,
+      answersCount,
     };
   }
 
@@ -208,17 +210,43 @@ export class QuestionsService {
   }
 
   /**
-   * 获取评论最多的问题
-   * get the most answers questions
+   * get answers count by questionId
+   * @param questionsId
+   */
+  async getAnswersCount(questionsId) {
+    const sql = `select count(*) as count from answers where questionId = ?`;
+    const [row0] = await this.dbService.execute(sql, [questionsId]);
+    return row0['count'];
+  }
+
+  /**
+   * 获取热门问题
+   * 获取条件:
+   * 1. 最近一个月
+   * 2. 最多回答
+   * 3. 倒序
    * @param limit
    */
-  async getByMostAnswers(limit) {
+  async getHotQuestions(limit) {
     const sql = `select q.*, count(a.id) as answers
                  from questions q
                           left join answers a on q.id = a.questionId
                  group by q.id
                  order by answers desc
                  limit ?`;
-    return await this.dbService.execute<Question[]>(sql, [String(limit)]);
+
+    const questions = await this.dbService.execute<Question[]>(sql, [
+      limit.toString(),
+    ]);
+
+    return await Promise.all(
+      questions.map(async (question) => {
+        const user = await this.userService.findById(question.userId);
+        return {
+          ...question,
+          user,
+        };
+      }),
+    );
   }
 }

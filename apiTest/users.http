@@ -12,3 +12,13 @@ Content-Type: application/json
   "password": "123456",
   "loginFrom": {}
 }
+
+### update
+### current support update user name
+POST {{host}}/users/17f36c77-8741-4f68-90ef-ce17b7804f6b
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "myName rename2"
+}

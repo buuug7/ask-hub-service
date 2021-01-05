@@ -40,6 +40,15 @@ export class UsersService {
     return this.getProfile(data.email);
   }
 
+  async update(id: string, data: { name: string }) {
+    const sql = `update users set name = ? where id = ?`;
+    const rs = await this.dbService.execute<ResultSetHeader>(sql, [
+      data.name,
+      id,
+    ]);
+    return rs.affectedRows > 0;
+  }
+
   async findById(id: string) {
     const sql = `select *
                  from users

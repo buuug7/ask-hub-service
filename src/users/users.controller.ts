@@ -15,4 +15,10 @@ export class UsersController {
   async create(@Body() body) {
     return this.userService.create(body);
   }
+
+  @Post(':id')
+  @UseGuards(AuthGuard('jwt'))
+  async update(@Param('id') id, @Body() body) {
+    return this.userService.update(id, body);
+  }
 }

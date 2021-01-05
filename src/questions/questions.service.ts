@@ -205,7 +205,7 @@ export class QuestionsService {
   async getAnswers(questionId) {
     const sql = `select *
                  from answers
-                 where questionId = ?`;
+                 where questionId = ? order by updatedAt desc`;
     return await this.dbService.execute<Answer[]>(sql, [questionId]);
   }
 

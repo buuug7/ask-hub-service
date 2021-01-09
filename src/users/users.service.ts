@@ -25,7 +25,6 @@ export class UsersService {
     const sql = `insert into users(id, name, email, password, active, loginFrom, createdAt, updatedAt)
                  values (?, ?, ?, ?, ?, ?, ?, ?)`;
     const dateTime = dayjs().format('YYYY-MM-DD HH:mm:ss');
-
     const rs = await this.dbService.execute<ResultSetHeader>(sql, [
       randomStringGenerator(),
       data.name,
@@ -46,7 +45,9 @@ export class UsersService {
       data.name,
       id,
     ]);
-    return rs.affectedRows > 0;
+
+    const user = await this.findById(id);
+    return this.mapDatabaseUserToUserProfile(user);
   }
 
   async findById(id: string) {
@@ -75,9 +76,16 @@ export class UsersService {
     return rs[0];
   }
 
-  async getProfile(email: string): Promise<Partial<User>> {
+  async getProfile(email: string) {
     const user = await this.findByEmail(email);
+    return this.mapDatabaseUserToUserProfile(user);
+  }
 
+  /**
+   * 数据库user数据映射部分字段为用户资料，返回给前端
+   * @param user
+   */
+  mapDatabaseUserToUserProfile(user: User): Partial<User> {
     return {
       id: user.id,
       name: user.name,

@@ -47,3 +47,7 @@ GET {{host}}/answers/32d8ffd3-2192-47f4-bec5-9a065e13b99a/starCount
 GET {{host}}/answers/95696bba-474a-4d38-b16b-1236950dc2be/isStarByRequestUser
 Authorization: Bearer {{token}}
 
+### canUpdate
+GET {{host}}/answers/0d39c8ce-b3f9-4b6a-8fe9-b7f728674937/canUpdate
+Authorization: Bearer {{token}}
+

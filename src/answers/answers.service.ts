@@ -152,4 +152,15 @@ export class AnswersService {
     const rs = await this.dbService.execute<Answer[]>(sql, [answerId, userId]);
     return rs.length > 0;
   }
+
+  /**
+   * determine the answer can be updated by given user
+   * @param answerId
+   * @param userId
+   */
+  async canUpdate(answerId: string, userId: string) {
+    const sql = `select * from answers where id = ? and userId = ?`;
+    const rs = await this.dbService.execute<Answer[]>(sql, [answerId, userId]);
+    return rs.length > 0;
+  }
 }

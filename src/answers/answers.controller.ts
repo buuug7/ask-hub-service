@@ -6,7 +6,6 @@ import {
   Param,
   Post,
   Put,
-  Query,
   Req,
   UseGuards,
 } from '@nestjs/common';
@@ -70,5 +69,11 @@ export class AnswersController {
   @Get(':id/starCount')
   async starCount(@Param('id') id) {
     return this.answersService.starCount(id);
+  }
+
+  @Get(':id/canUpdate')
+  @UseGuards(AuthGuard('jwt'))
+  async canUpdate(@Param('id') answerId, @Req() req: Request) {
+    return this.answersService.canUpdate(answerId, req.user['id']);
   }
 }

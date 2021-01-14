@@ -49,3 +49,7 @@ GET {{host}}/questions/69ad24a8-eec5-4189-b3ff-61b7a11978f5/answers?perPage=10
 
 ### get the hot questions
 GET {{host}}/questions/analysis/getHotQuestions?limit=5
+
+### canUpdate
+GET {{host}}/questions/98e27284-aed4-43d5-8923-a8eadee0aa8a/canUpdate
+Authorization: Bearer {{token}}

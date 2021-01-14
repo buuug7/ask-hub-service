@@ -20,7 +20,7 @@ export class QuestionsController {
 
   @Post()
   @UseGuards(AuthGuard('jwt'))
-  async create(@Body() body, @Req() req: Request) {
+  create(@Body() body, @Req() req: Request) {
     return this.questionsService.create({
       ...body,
       user: req.user,
@@ -29,7 +29,7 @@ export class QuestionsController {
 
   @Put(':id')
   @UseGuards(AuthGuard('jwt'))
-  async update(
+  update(
     @Param('id') id,
     @Body() body,
     @Req() req: Request & { user: { id } },
@@ -43,34 +43,40 @@ export class QuestionsController {
   }
 
   @Get(':id')
-  async view(@Param('id') id) {
+  view(@Param('id') id) {
     return this.questionsService.getByIdWithRelation(id);
   }
 
   @Get()
-  async list(@Query() query) {
+  list(@Query() query) {
     return this.questionsService.list(query);
   }
 
   @Delete(':id')
   @UseGuards(AuthGuard('jwt'))
-  async delete(@Param('id') id, @Req() req: Request) {
+  delete(@Param('id') id, @Req() req: Request) {
     return this.questionsService.delete(id);
   }
 
   @Get(':id/tags')
-  async tags(@Param('id') id) {
+  tags(@Param('id') id) {
     return this.questionsService.getTags(id);
   }
 
   @Get(':id/answers')
-  async answers(@Param('id') id) {
+  answers(@Param('id') id) {
     return this.questionsService.getAnswers(id);
   }
 
   @Get('/analysis/getHotQuestions')
-  async getHostQuestions(@Query() query) {
+  getHostQuestions(@Query() query) {
     const limit = query.limit || 10;
     return this.questionsService.getHotQuestions(limit);
+  }
+
+  @Get(':id/canUpdate')
+  @UseGuards(AuthGuard('jwt'))
+  canUpdate(@Param('id') id, @Req() req: Request) {
+    return this.questionsService.canUpdate(id, req.user['id']);
   }
 }

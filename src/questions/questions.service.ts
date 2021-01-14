@@ -249,4 +249,18 @@ export class QuestionsService {
       }),
     );
   }
+
+  /**
+   * determine whether a specified question can be update by give user
+   * @param questionId
+   * @param userId
+   */
+  async canUpdate(questionId: string, userId: string) {
+    const sql = `select * from questions where id = ? and userId = ?`;
+    const rs = await this.dbService.execute<Question[]>(sql, [
+      questionId,
+      userId,
+    ]);
+    return rs.length > 0;
+  }
 }

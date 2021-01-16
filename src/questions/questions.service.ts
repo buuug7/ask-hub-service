@@ -263,4 +263,78 @@ export class QuestionsService {
     ]);
     return rs.length > 0;
   }
+
+  /**
+   * determine question whether is watch by user
+   * @param questionId
+   * @param userId
+   */
+  async isWatchByUser(questionId: string, userId: string) {
+    const sql = `select *
+                 from questions_users_watch
+                 where questionId = ?
+                   and userId = ?`;
+    const rs = await this.dbService.execute<any[]>(sql, [questionId, userId]);
+    return rs.length > 0;
+  }
+
+  /**
+   * get watch count of the question
+   * @param questionId
+   */
+  async watchCount(questionId: string) {
+    const sql = `select count(*) as count
+                 from questions_users_watch
+                 where questionId = ?`;
+    const rs = await this.dbService.execute(sql, [questionId]);
+    return rs[0]['count'];
+  }
+
+  /**
+   * watch question
+   * 关注问题
+   * @param questionId
+   * @param userId
+   */
+  async watch(questionId: string, userId: string) {
+    const sql = `insert into questions_users_watch(questionId, userId) value (?, ?)`;
+    const rs = await this.dbService.execute<ResultSetHeader>(sql, [
+      questionId,
+      userId,
+    ]);
+
+    return this.watchCount(questionId);
+  }
+
+  /**
+   * cancel watch
+   * @param questionId
+   * @param userId
+   */
+  async unWatch(questionId: string, userId: string) {
+    const sql = `delete
+                 from questions_users_watch
+                 where questionId = ?
+                   and userId = ?`;
+    const rs = await this.dbService.execute<ResultSetHeader>(sql, [
+      questionId,
+      userId,
+    ]);
+
+    return this.watchCount(questionId);
+  }
+
+  /**
+   * toggle watch
+   * if watch and then unWatch, otherwise ..
+   * @param questionId
+   * @param userId
+   */
+  async toggleWatch(questionId: string, userId: string) {
+    const isWatch = await this.isWatchByUser(questionId, userId);
+    isWatch
+      ? await this.unWatch(questionId, userId)
+      : await this.watch(questionId, userId);
+    return this.watchCount(questionId);
+  }
 }

@@ -53,3 +53,22 @@ GET {{host}}/questions/analysis/getHotQuestions?limit=5
 ### canUpdate
 GET {{host}}/questions/98e27284-aed4-43d5-8923-a8eadee0aa8a/canUpdate
 Authorization: Bearer {{token}}
+
+### watchCount
+GET {{host}}/questions/d1bf51e6-398c-4566-8419-e07befa66063/watchCount
+
+### isWatchByUser
+GET {{host}}/questions/d1bf51e6-398c-4566-8419-e07befa66063/isWatchByUser
+Authorization: Bearer {{token}}
+
+### watch
+POST {{host}}/questions/d1bf51e6-398c-4566-8419-e07befa66063/watch
+Authorization: Bearer {{token}}
+
+### unWatch
+POST {{host}}/questions/d1bf51e6-398c-4566-8419-e07befa66063/unWatch
+Authorization: Bearer {{token}}
+
+### toggleWatch
+POST {{host}}/questions/d1bf51e6-398c-4566-8419-e07befa66063/toggleWatch
+Authorization: Bearer {{token}}

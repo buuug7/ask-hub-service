@@ -77,3 +77,15 @@ create table `answers_users_star`
     constraint `fk_answers_users_star_userId` foreign key (userId)
         references users (id) on update cascade on delete cascade
 );
+
+create table questions_users_watch
+(
+    questionId varchar(191) not null,
+    userId     varchar(191) not null,
+
+    primary key (questionId, userId),
+    constraint `fk_questions_users_watch_questionId` foreign key (questionId)
+        references questions (id) on update cascade on delete cascade,
+    constraint `fk_questions_users_watch_userId` foreign key (userId)
+        references users (id) on update cascade on delete cascade
+);

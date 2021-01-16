@@ -148,7 +148,7 @@ export class AnswersService {
    * @param userId
    */
   async toggleStar(answerId: string, userId: string) {
-    const isStar = await this.isStarByGivenUser(answerId, userId);
+    const isStar = await this.isStarByUser(answerId, userId);
 
     isStar
       ? await this.unStar(answerId, userId)
@@ -170,11 +170,11 @@ export class AnswersService {
   }
 
   /**
-   * determine the answer whether is star by given user
+   * determine the answer whether is star by user
    * @param answerId
    * @param userId
    */
-  async isStarByGivenUser(answerId: string, userId: string) {
+  async isStarByUser(answerId: string, userId: string) {
     const sql = `select *
                  from answers_users_star
                  where answerId = ?

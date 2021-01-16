@@ -54,10 +54,10 @@ export class AnswersController {
     return this.answersService.unStar(answerId, req.user['id']);
   }
 
-  @Get(':id/isStarByRequestUser')
+  @Get(':id/isStarByUser')
   @UseGuards(AuthGuard('jwt'))
-  async isAlreadyStar(@Param('id') answerId, @Req() req: Request) {
-    return this.answersService.isStarByGivenUser(answerId, req.user['id']);
+  async isStarByUser(@Param('id') answerId, @Req() req: Request) {
+    return this.answersService.isStarByUser(answerId, req.user['id']);
   }
 
   @Post(':id/toggleStar')

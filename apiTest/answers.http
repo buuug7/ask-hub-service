@@ -43,8 +43,8 @@ Authorization: Bearer {{token}}
 ### starCount
 GET {{host}}/answers/32d8ffd3-2192-47f4-bec5-9a065e13b99a/starCount
 
-### isStarByRequestUser
-GET {{host}}/answers/95696bba-474a-4d38-b16b-1236950dc2be/isStarByRequestUser
+### isStarByUser
+GET {{host}}/answers/95696bba-474a-4d38-b16b-1236950dc2be/isStarByUser
 Authorization: Bearer {{token}}
 
 ### canUpdate

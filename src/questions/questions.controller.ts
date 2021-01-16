@@ -79,4 +79,33 @@ export class QuestionsController {
   canUpdate(@Param('id') id, @Req() req: Request) {
     return this.questionsService.canUpdate(id, req.user['id']);
   }
+
+  @Get(':id/watchCount')
+  watchCount(@Param('id') id) {
+    return this.questionsService.watchCount(id);
+  }
+
+  @Get(':id/isWatchByUser')
+  @UseGuards(AuthGuard('jwt'))
+  isWatchByUser(@Param('id') id, @Req() req: Request) {
+    return this.questionsService.isWatchByUser(id, req.user['id']);
+  }
+
+  @Post(':id/watch')
+  @UseGuards(AuthGuard('jwt'))
+  watch(@Param('id') id, @Req() req: Request) {
+    return this.questionsService.watch(id, req.user['id']);
+  }
+
+  @Post(':id/unWatch')
+  @UseGuards(AuthGuard('jwt'))
+  unWatch(@Param('id') id, @Req() req: Request) {
+    return this.questionsService.unWatch(id, req.user['id']);
+  }
+
+  @Post(':id/toggleWatch')
+  @UseGuards(AuthGuard('jwt'))
+  toggleWatch(@Param('id') id, @Req() req: Request) {
+    return this.questionsService.toggleWatch(id, req.user['id']);
+  }
 }

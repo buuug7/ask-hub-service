@@ -77,8 +77,8 @@ export class FakerService {
    * faker questions
    */
   async createQuestions() {
-    const user1 = await this.userService.findByEmail("ask@dev.com");
-    const user2 = await this.userService.findByEmail("youpp@126.com");
+    const user1 = await this.userService.findByEmail('ask@dev.com');
+    const user2 = await this.userService.findByEmail('youpp@126.com');
 
     const tags: Tag[] = await this.tagsService.getAllTag();
     const questions = [];
@@ -105,8 +105,8 @@ export class FakerService {
       perPage: 5,
     });
 
-    const user1 = await this.userService.findByEmail("ask@dev.com");
-    const user2 = await this.userService.findByEmail("youpp@126.com");
+    const user1 = await this.userService.findByEmail('ask@dev.com');
+    const user2 = await this.userService.findByEmail('youpp@126.com');
 
     const answers = [];
     for (let i = 0; i < 50; i++) {

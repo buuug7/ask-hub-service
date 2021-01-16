@@ -1,4 +1,10 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import {
+  forwardRef,
+  HttpException,
+  HttpStatus,
+  Inject,
+  Injectable,
+} from '@nestjs/common';
 import { Answer } from './answers.type';
 import { QuestionsService } from '../questions/questions.service';
 import { DbService } from '../db.service';
@@ -42,7 +48,31 @@ export class AnswersService {
     };
   }
 
+  /**
+   * check if the user already answered the question
+   * @param questionId
+   * @param userId
+   */
+  async alreadyAnswered(questionId: string, userId: string) {
+    const sql = `select * from answers where questionId =? and userId = ?`;
+    const rs = await this.dbService.execute<Answer[]>(sql, [
+      questionId,
+      userId,
+    ]);
+
+    return rs.length > 0;
+  }
+
   async create(data: Partial<Answer>) {
+    const alreadyAnswered = await this.alreadyAnswered(
+      data.question.id,
+      data.user.id,
+    );
+
+    if (alreadyAnswered) {
+      throw new HttpException('你已经回答该问题了!', HttpStatus.FORBIDDEN);
+    }
+
     const sql = `insert into answers(id, text, active, createdAt, updatedAt, questionId, userId)
                  values (?, ?, ?, ?, ?, ?, ?)`;
     const id = randomStringGenerator();

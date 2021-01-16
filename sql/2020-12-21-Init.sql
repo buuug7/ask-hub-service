@@ -49,7 +49,9 @@ create table `answers`
     constraint `fk_answers_questionId` foreign key (questionId)
         references questions (id) on update cascade on delete no action,
     constraint `fk_answers_userId` foreign key (userId)
-        REFERENCES users (id) on update cascade on delete no action
+        REFERENCES users (id) on update cascade on delete no action,
+    constraint unique_questionId_userId
+        unique (questionId, userId)
 );
 
 create table `questions_tags`

@@ -77,7 +77,7 @@ export class AnswersService {
                  values (?, ?, ?, ?, ?, ?, ?)`;
     const id = randomStringGenerator();
     const dateTime = dayjs().format('YYYY-MM-DD HH:mm:ss');
-    const rs = await this.dbService.execute<ResultSetHeader>(sql, [
+    await this.dbService.execute<ResultSetHeader>(sql, [
       id,
       data.text,
       '1',
@@ -96,15 +96,33 @@ export class AnswersService {
                      updatedAt = ?
                  where id = ?`;
     const updatedAt = dayjs().format('YYYY-MM-DD HH:mm:ss');
-    const rs = await this.dbService.execute(sql, [data.text, updatedAt, id]);
+    await this.dbService.execute(sql, [data.text, updatedAt, id]);
     return this.findById(id);
+  }
+
+  /**
+   * check the resource can be deleted by user
+   * @param id
+   * @param userId
+   */
+  async canDelete(id: string, userId: string) {
+    const sql = `select * from answers where id = ? and userId = ?`;
+    const rs = await this.dbService.execute<Answer[]>(sql, [id, userId]);
+    return rs.length > 0;
   }
 
   /**
    * delete resource
    * @param id
+   * @param userId
    */
-  async delete(id: string) {
+  async delete(id: string, userId: string) {
+    const canDelete = await this.canDelete(id, userId);
+
+    if (!canDelete) {
+      throw new HttpException('没有删除权限!', HttpStatus.FORBIDDEN);
+    }
+
     const sql = `delete
                  from answers
                  where id = ?`;
@@ -120,7 +138,7 @@ export class AnswersService {
   async star(answerId: string, userId: string) {
     const sql = `insert into answers_users_star(answerId, userId)
                  values (?, ?)`;
-    const rs = await this.dbService.execute(sql, [answerId, userId]);
+    await this.dbService.execute(sql, [answerId, userId]);
     return this.starCount(answerId);
   }
 
@@ -134,10 +152,7 @@ export class AnswersService {
                  from answers_users_star
                  where answerId = ?
                    and userId = ?`;
-    const rs = await this.dbService.execute<ResultSetHeader>(sql, [
-      answerId,
-      userId,
-    ]);
+    await this.dbService.execute<ResultSetHeader>(sql, [answerId, userId]);
     return this.starCount(answerId);
   }
 

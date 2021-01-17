@@ -27,53 +27,59 @@ export class AnswersController {
 
   @Put(':id')
   @UseGuards(AuthGuard('jwt'))
-  async update(@Param('id') id, @Body() body, @Req() req: Request) {
+  update(@Param('id') id, @Body() body, @Req() req: Request) {
     return this.answersService.update(id, body);
   }
 
   @Get(':id')
-  async view(@Param('id') id) {
+  view(@Param('id') id) {
     return this.answersService.findByIdWithRelation(id);
+  }
+
+  @Get(':id/canDelete')
+  @UseGuards(AuthGuard('jwt'))
+  canDelete(@Param('id') id, @Req() req: Request) {
+    return this.answersService.canDelete(id, req.user['id']);
   }
 
   @Delete(':id')
   @UseGuards(AuthGuard('jwt'))
-  async delete(@Param('id') id, @Req() req: Request) {
-    return this.answersService.delete(id);
+  delete(@Param('id') id, @Req() req: Request) {
+    return this.answersService.delete(id, req.user['id']);
   }
 
   @Post(':id/star')
   @UseGuards(AuthGuard('jwt'))
-  async star(@Param('id') answerId, @Req() req: Request) {
+  star(@Param('id') answerId, @Req() req: Request) {
     return this.answersService.star(answerId, req.user['id']);
   }
 
   @Post(':id/unStar')
   @UseGuards(AuthGuard('jwt'))
-  async unStar(@Param('id') answerId, @Req() req: Request) {
+  unStar(@Param('id') answerId, @Req() req: Request) {
     return this.answersService.unStar(answerId, req.user['id']);
   }
 
   @Get(':id/isStarByUser')
   @UseGuards(AuthGuard('jwt'))
-  async isStarByUser(@Param('id') answerId, @Req() req: Request) {
+  isStarByUser(@Param('id') answerId, @Req() req: Request) {
     return this.answersService.isStarByUser(answerId, req.user['id']);
   }
 
   @Post(':id/toggleStar')
   @UseGuards(AuthGuard('jwt'))
-  async toggleStar(@Param('id') answerId, @Req() req: Request) {
+  toggleStar(@Param('id') answerId, @Req() req: Request) {
     return this.answersService.toggleStar(answerId, req.user['id']);
   }
 
   @Get(':id/starCount')
-  async starCount(@Param('id') id) {
+  starCount(@Param('id') id) {
     return this.answersService.starCount(id);
   }
 
   @Get(':id/canUpdate')
   @UseGuards(AuthGuard('jwt'))
-  async canUpdate(@Param('id') answerId, @Req() req: Request) {
+  canUpdate(@Param('id') answerId, @Req() req: Request) {
     return this.answersService.canUpdate(answerId, req.user['id']);
   }
 }

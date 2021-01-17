@@ -51,3 +51,7 @@ Authorization: Bearer {{token}}
 GET {{host}}/answers/0d39c8ce-b3f9-4b6a-8fe9-b7f728674937/canUpdate
 Authorization: Bearer {{token}}
 
+### canDelete
+GET {{host}}/answers/0d39c8ce-b3f9-4b6a-8fe9-b7f728674937/canDelete
+Authorization: Bearer {{token}}
+

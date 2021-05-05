@@ -22,7 +22,7 @@ export class AuthService {
     return null;
   }
 
-  async login(user: Partial<User>) {
+  async generateToken(user: Partial<User>) {
     return {
       token: this.jwtService.sign({
         id: user.id,

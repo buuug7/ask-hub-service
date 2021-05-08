@@ -40,7 +40,9 @@ export class UsersService {
   }
 
   async update(id: string, data: { name: string }) {
-    const sql = `update users set name = ? where id = ?`;
+    const sql = `update users
+                 set name = ?
+                 where id = ?`;
     const rs = await this.dbService.execute<ResultSetHeader>(sql, [
       data.name,
       id,
@@ -57,10 +59,7 @@ export class UsersService {
                  limit 1`;
     const rs = await this.dbService.execute<User[]>(sql, [id]);
 
-    if (rs.length <= 0) {
-      return null;
-    }
-    return rs[0];
+    return rs.length > 0 ? rs[0] : null;
   }
 
   async findByEmail(email: string) {
@@ -69,11 +68,7 @@ export class UsersService {
                  where email = ?
                  limit 1`;
     const rs = await this.dbService.execute<User[]>(sql, [email]);
-
-    if (rs.length <= 0) {
-      return null;
-    }
-    return rs[0];
+    return rs.length > 0 ? rs[0] : null;
   }
 
   async getProfile(email: string) {

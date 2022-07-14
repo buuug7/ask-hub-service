@@ -7,18 +7,18 @@ export class UsersController {
   constructor(private userService: UsersService) {}
 
   @Get('profile/:email')
-  async profile(@Param('email') email: string) {
+  profile(@Param('email') email: string) {
     return this.userService.getProfile(email);
   }
 
   @Post()
-  async create(@Body() body) {
+  create(@Body() body) {
     return this.userService.create(body);
   }
 
   @Post(':id')
   @UseGuards(AuthGuard('jwt'))
-  async update(@Param('id') id, @Body() body) {
+  update(@Param('id') id, @Body() body) {
     return this.userService.update(id, body);
   }
 }

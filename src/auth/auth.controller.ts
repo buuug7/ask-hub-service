@@ -8,7 +8,7 @@ export class AuthController {
 
   @UseGuards(AuthGuard('local'))
   @Post('login')
-  async login(@Req() req) {
+  login(@Req() req) {
     return this.authService.generateToken(req.user);
   }
 }
